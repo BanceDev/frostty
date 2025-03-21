@@ -5,3 +5,9 @@ edition = "2024"
 
 [dependencies]
 nix = "0.20"
+iced_graphics = "0.13.0"
+iced_core = "0.13.2"
+
+[dependencies.iced]
+version = "0.13.1"
+features = ["wgpu", "tokio", "advanced", "lazy", "smol", "canvas"]
