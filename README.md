@@ -1,4 +1,6 @@
 <p align="center">
+  <img width="256" height=auto src="https://github.com/BanceDev/frostty/blob/main/logo.png">
+  <br/>
   <img src="https://img.shields.io/github/contributors/bancedev/frostty" alt="contributors">
   <img src="https://img.shields.io/github/license/bancedev/frostty" alt="license">
   <img src="https://img.shields.io/github/forks/bancedev/frostty" alt="forks">
