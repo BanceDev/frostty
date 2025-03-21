@@ -164,17 +164,6 @@ impl Default for Frostty {
     }
 }
 
-const PANE_ID_COLOR_UNFOCUSED: Color = Color::from_rgb(
-    0xFF as f32 / 255.0,
-    0xC7 as f32 / 255.0,
-    0xC7 as f32 / 255.0,
-);
-const PANE_ID_COLOR_FOCUSED: Color = Color::from_rgb(
-    0xFF as f32 / 255.0,
-    0x47 as f32 / 255.0,
-    0x47 as f32 / 255.0,
-);
-
 fn handle_hotkey(key: keyboard::Key) -> Option<Message> {
     use keyboard::key::{self, Key};
     use pane_grid::Direction;
