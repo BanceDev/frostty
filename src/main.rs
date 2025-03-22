@@ -1,11 +1,13 @@
 use iced::{keyboard, Theme};
 use iced::widget::pane_grid::{self, PaneGrid};
 use iced::widget::{
-    button, center, column, container, responsive, scrollable, text,
+    container, responsive, scrollable,
 };
-use iced::{Center, Color, Element, Fill, Size, Subscription};
+use iced::{Element, Fill, Size, Subscription};
+use crate::widget::terminal;
 
 mod style;
+mod widget;
 
 pub fn main() -> iced::Result {
     iced::application("Frostty", Frostty::update, Frostty::view)
@@ -129,13 +131,12 @@ impl Frostty {
 
     fn view(&self) -> Element<Message> {
         let focus = self.focus;
-        let total_panes = self.panes.len();
 
         let pane_grid = PaneGrid::new(&self.panes, |id, pane, _is_maximized| {
             let is_focused = focus == Some(id);
 
-            pane_grid::Content::new(responsive(move |size| {
-                view_content(id, total_panes, pane.is_pinned, size)
+            pane_grid::Content::new(responsive(move |_size| {
+                view_content(pane)
             }))
             .style(if is_focused {
                 style::pane_focused
@@ -202,31 +203,10 @@ impl Pane {
 }
 
 fn view_content<'a>(
-    pane: pane_grid::Pane,
-    total_panes: usize,
-    is_pinned: bool,
-    size: Size,
+    pane: &Pane,
 ) -> Element<'a, Message> {
-    let button = |label, message| {
-        button(text(label).width(Fill).align_x(Center).size(16))
-            .width(Fill)
-            .padding(8)
-            .on_press(message)
-    };
 
-    let controls = column![]
-    .push_maybe(if total_panes > 1 && !is_pinned {
-        Some(button("Close", Message::Close(pane)).style(button::danger))
-    } else {
-        None
-    })
-    .spacing(5)
-    .max_width(160);
+    let content = terminal(pane.id.to_string()).size(16);
 
-    let content =
-        column![text!("{}x{}", size.width, size.height).size(24), controls,]
-            .spacing(10)
-            .align_x(Center);
-
-    center(scrollable(content)).padding(5).into()
+    container(scrollable(content)).padding(5).into()
 }
