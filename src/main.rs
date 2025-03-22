@@ -7,6 +7,7 @@ use iced::{Font, Element, Fill, Length, Size, Subscription};
 use iced::{Theme, keyboard};
 use terminal::TerminalView;
 use std::collections::HashMap;
+use std::env;
 
 mod style;
 mod terminal;
@@ -16,6 +17,7 @@ const TERM_FONT_JET_BRAINS_BYTES: &[u8] = include_bytes!(
 );
 
 pub fn main() -> iced::Result {
+    unsafe { env::set_var("TERM", "frostty"); }
     iced::application("Frostty", Frostty::update, Frostty::view)
         .subscription(Frostty::subscription)
         .antialiasing(false)

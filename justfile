@@ -20,6 +20,7 @@ appdata-dst := clean(rootdir / prefix) / 'share' / 'appdata' / appdata
 icons-src := 'extra' / 'icons' / 'hicolor' / 'frostty.png'
 icons-dst := clean(rootdir / prefix) / 'share' / 'icons' / 'hicolor'
 
+info := 'extra' / 'frostty.info'
 
 default: build-release
 
@@ -39,6 +40,7 @@ install:
     install -Dm0644 {{desktop-src}} {{desktop-dst}}
     install -Dm0644 {{appdata-src}} {{appdata-dst}}
     install -Dm0644 {{icons-src}} {{icons-dst}}
+    tic -x {{info}}
 
 uninstall:
     rm {{bin-dst}} {{desktop-dst}} {{icons-dst}}
