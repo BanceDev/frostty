@@ -12,6 +12,13 @@ pub fn main() -> iced::Result {
     iced::application("Frostty", Frostty::update, Frostty::view)
         .subscription(Frostty::subscription)
         .theme(Frostty::theme)
+        .settings(iced::settings::Settings {
+            default_font: iced::Font {
+                family: iced::font::Family::Monospace,
+                ..Default::default()
+            },
+            ..Default::default()
+        })
         .window(iced::window::Settings {
             platform_specific: PlatformSpecific {
                 application_id: "frostty".to_string(),
@@ -218,6 +225,6 @@ impl Pane {
 }
 
 fn view_content<'a>(pane: &Pane) -> Element<'a, Message> {
-    let content = terminal(pane.id.to_string()).size(16);
+    let content = terminal(">_ █").size(16);
     container(scrollable(content)).padding(5).into()
 }

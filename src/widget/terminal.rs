@@ -1,6 +1,7 @@
 //! Draw and interact with text.
 pub use iced_core::text::{Fragment, Highlighter, IntoFragment, Span};
 pub use iced_core::widget::text::*;
+mod theme;
 
 /// A bunch of text.
 ///
