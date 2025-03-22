@@ -1,10 +1,9 @@
-use iced::{keyboard, Theme};
-use iced::widget::pane_grid::{self, PaneGrid};
-use iced::widget::{
-    container, responsive, scrollable,
-};
-use iced::{Element, Fill, Size, Subscription};
 use crate::widget::terminal;
+use iced::widget::pane_grid::{self, PaneGrid};
+use iced::widget::{container, responsive, scrollable};
+use iced::window::settings::PlatformSpecific;
+use iced::{Element, Fill, Size, Subscription};
+use iced::{Theme, keyboard};
 
 mod style;
 mod widget;
@@ -13,6 +12,14 @@ pub fn main() -> iced::Result {
     iced::application("Frostty", Frostty::update, Frostty::view)
         .subscription(Frostty::subscription)
         .theme(Frostty::theme)
+        .window(iced::window::Settings {
+            platform_specific: PlatformSpecific {
+                application_id: "frostty".to_string(),
+                override_redirect: false,
+            },
+            ..Default::default()
+        })
+        .window_size((790.0, 460.0))
         .run()
 }
 
@@ -24,7 +31,7 @@ struct Frostty {
 
 #[derive(Debug, Clone, Copy)]
 enum Message {
-    Split(pane_grid::Axis, pane_grid::Pane),
+    Split(pane_grid::Axis),
     SplitFocused,
     FocusAdjacent(pane_grid::Direction),
     Clicked(pane_grid::Pane),
@@ -47,30 +54,32 @@ impl Frostty {
 
     fn update(&mut self, message: Message) {
         match message {
-            Message::Split(axis, pane) => {
-                let result =
-                    self.panes.split(axis, pane, Pane::new(self.panes_created));
+            Message::Split(axis) => {
+                if let Some(pane) = self.focus {
+                    let result = self.panes.split(axis, pane, Pane::new(self.panes_created));
 
-                if let Some((pane, _)) = result {
-                    self.focus = Some(pane);
+                    if let Some((pane, _)) = result {
+                        self.focus = Some(pane);
+                    }
+
+                    self.panes_created += 1;
                 }
-
-                self.panes_created += 1;
             }
             Message::SplitFocused => {
                 if let Some(pane) = self.focus {
-                    let size = self.panes.layout()
+                    let size = self
+                        .panes
+                        .layout()
                         .pane_regions(0.0, Size::new(800.0, 600.0))
                         .get(&pane)
                         .unwrap()
                         .clone();
-                    let axis = if size.width >= size.height { pane_grid::Axis::Vertical } 
-                            else { pane_grid::Axis::Horizontal };
-                    let result = self.panes.split(
-                        axis,
-                        pane,
-                        Pane::new(self.panes_created),
-                    );
+                    let axis = if size.width >= size.height {
+                        pane_grid::Axis::Vertical
+                    } else {
+                        pane_grid::Axis::Horizontal
+                    };
+                    let result = self.panes.split(axis, pane, Pane::new(self.panes_created));
 
                     if let Some((pane, _)) = result {
                         self.focus = Some(pane);
@@ -81,8 +90,7 @@ impl Frostty {
             }
             Message::FocusAdjacent(direction) => {
                 if let Some(pane) = self.focus {
-                    if let Some(adjacent) = self.panes.adjacent(pane, direction)
-                    {
+                    if let Some(adjacent) = self.panes.adjacent(pane, direction) {
                         self.focus = Some(adjacent);
                     }
                 }
@@ -93,10 +101,7 @@ impl Frostty {
             Message::Resized(pane_grid::ResizeEvent { split, ratio }) => {
                 self.panes.resize(split, ratio);
             }
-            Message::Dragged(pane_grid::DragEvent::Dropped {
-                pane,
-                target,
-            }) => {
+            Message::Dragged(pane_grid::DragEvent::Dropped { pane, target }) => {
                 self.panes.drop(pane, target);
             }
             Message::Dragged(_) => {}
@@ -135,7 +140,8 @@ impl Frostty {
         let pane_grid = PaneGrid::new(&self.panes, |id, pane, _is_maximized| {
             let is_focused = focus == Some(id);
 
-            pane_grid::Content::new(responsive(move |_size| {
+            pane_grid::Content::new(responsive(move |size| {
+                pane.set_size(size);
                 view_content(pane)
             }))
             .style(if is_focused {
@@ -167,9 +173,12 @@ impl Default for Frostty {
 
 fn handle_hotkey(key: keyboard::Key) -> Option<Message> {
     use keyboard::key::{self, Key};
-    use pane_grid::Direction;
+    use pane_grid::{Axis, Direction};
 
     match key.as_ref() {
+        // TODO: config file for this
+        Key::Character("h") => Some(Message::Split(Axis::Horizontal)),
+        Key::Character("v") => Some(Message::Split(Axis::Vertical)),
         Key::Character("n") => Some(Message::SplitFocused),
         Key::Character("q") => Some(Message::CloseFocused),
         Key::Named(key) => {
@@ -190,6 +199,7 @@ fn handle_hotkey(key: keyboard::Key) -> Option<Message> {
 #[derive(Clone, Copy)]
 struct Pane {
     id: usize,
+    size: Size,
     pub is_pinned: bool,
 }
 
@@ -197,16 +207,17 @@ impl Pane {
     fn new(id: usize) -> Self {
         Self {
             id,
+            size: Size::new(0.0, 0.0),
             is_pinned: false,
         }
     }
+    fn set_size(mut self, size: Size) -> Self {
+        self.size = size;
+        self
+    }
 }
 
-fn view_content<'a>(
-    pane: &Pane,
-) -> Element<'a, Message> {
-
+fn view_content<'a>(pane: &Pane) -> Element<'a, Message> {
     let content = terminal(pane.id.to_string()).size(16);
-
     container(scrollable(content)).padding(5).into()
 }

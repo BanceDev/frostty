@@ -1,0 +1,20 @@
+[Desktop Entry]
+Type=Application
+TryExec=frostty
+Exec=frostty
+Icon=frostty
+Terminal=false
+Categories=System;TerminalEmulator;
+
+Name=frostty
+GenericName=Terminal
+Comment=A termianl emulator for people who get things done
+StartupNotify=true
+StartupWMClass=frostty
+Actions=New;
+X-Desktop-File-Install-Version=0.28
+
+[Desktop Action New]
+Name=New Terminal
+Exec=frostty
+
