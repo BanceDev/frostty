@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SPDX-License-Identifier: MIT -->
+<component type="desktop-application">
+  <id>dev.bance.frostty</id>
+
+  <developer_name>Lance Borden</developer_name>
+  <developer id="dev.bance">
+    <name>Lance Borden</name>
+  </developer>
+
+  <name>Frostty</name>
+
+  <project_license>MIT</project_license>
+  <metadata_license>MIT</metadata_license>
+
+  <summary>A terminal emulator for people who get things done</summary>
+  <description>
+    <p>
+        Frostty is a terminal emulator for people who get things done. Built using Rust with the Iced GUI framework, Frostty offers a terminal emulator with the batteries included that is intuitive, customizable, and performant.
+    </p>
+    <ul>
+      <li>Wayland native</li>
+      <li>X11 native</li>
+      <li>DE agnostic</li>
+    </ul>
+  </description>
+
+  <categories>
+    <category>TerminalEmulator</category>
+  </categories>
+
+  <url type="homepage">https://github.com/BanceDev/frostty</url>
+  <url type="bugtracker">https://github.com/BanceDev/frostty/issues</url>
+
+  <launchable type="desktop-id">frostty.desktop</launchable>
+
+  <content_rating type="oars-1.0" />
+</component>
