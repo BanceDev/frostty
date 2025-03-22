@@ -1,6 +1,10 @@
 //! Draw and interact with text.
 pub use iced_core::text::{Fragment, Highlighter, IntoFragment, Span};
 pub use iced_core::widget::text::*;
+pub use rich::Rich;
+pub use theme::TerminalPalette;
+pub use theme::TerminalTheme;
+mod rich;
 mod theme;
 
 /// A bunch of text.

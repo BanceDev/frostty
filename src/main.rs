@@ -1,8 +1,13 @@
-use crate::widget::terminal;
+use crate::widget::rich_text;
+use crate::widget::terminal::TerminalTheme;
+use crate::widget::terminal_palette;
+use iced::font;
 use iced::widget::pane_grid::{self, PaneGrid};
+use iced::widget::span;
 use iced::widget::{container, responsive, scrollable};
 use iced::window::settings::PlatformSpecific;
 use iced::{Element, Fill, Size, Subscription};
+use iced::{Font, color};
 use iced::{Theme, keyboard};
 
 mod style;
@@ -225,6 +230,23 @@ impl Pane {
 }
 
 fn view_content<'a>(pane: &Pane) -> Element<'a, Message> {
-    let content = terminal(">_ █").size(16);
+    //let content = terminal(">_ █").size(16);
+    let palette = terminal_palette(TerminalTheme::Dracula);
+    let content = rich_text([
+        span("test").color(palette.foreground.blue).font(Font {
+            weight: font::Weight::Bold,
+            ..Font::MONOSPACE
+        }),
+        span("::").color(palette.foreground.cyan).font(Font {
+            weight: font::Weight::Bold,
+            ..Font::MONOSPACE
+        }),
+        span("frostty$ ").color(palette.foreground.blue).font(Font {
+            weight: font::Weight::Bold,
+            ..Font::MONOSPACE
+        }),
+        span("█").color(palette.foreground.white),
+    ])
+    .size(16);
     container(scrollable(content)).padding(5).into()
 }
