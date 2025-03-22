@@ -57,7 +57,7 @@ enum Message {
 
 impl Frostty {
     fn new() -> (Self, Task<Message>) {
-        let (panes, _) = pane_grid::State::new(Pane::new(0));
+        let (panes, pane) = pane_grid::State::new(Pane::new(0));
         let term_settings = terminal::settings::Settings {
             font: terminal::settings::FontSettings {
                 size: 16.0,
@@ -89,7 +89,7 @@ impl Frostty {
             Frostty {
                 panes,
                 panes_created: 1,
-                focus: None,
+                focus: Some(pane),
                 terminals,
                 term_settings,
             },
