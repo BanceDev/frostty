@@ -7,6 +7,7 @@ edition = "2024"
 nix = "0.20"
 iced_graphics = "0.13.0"
 iced_core = "0.13.2"
+vte = "0.15.0"
 
 [dependencies.iced]
 version = "0.13.1"
