@@ -4,10 +4,12 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-nix = "0.20"
+alacritty_terminal = "0.24.1"
 iced_graphics = "0.13.0"
 iced_core = "0.13.2"
-vte = "0.15.0"
+open = "5.3.1"
+anyhow = "1.0.93"
+tokio = { version = "1.41.1", features = ["full"]}
 
 [dependencies.iced]
 version = "0.13.1"

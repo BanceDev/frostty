@@ -1,29 +1,25 @@
-use crate::widget::rich_text;
-use crate::widget::terminal::TerminalTheme;
-use crate::widget::terminal_palette;
-use iced::font;
+use iced::font::{Family, Stretch, Weight};
 use iced::widget::pane_grid::{self, PaneGrid};
-use iced::widget::span;
-use iced::widget::{container, responsive, scrollable};
+use iced::Task;
+use iced::widget::{container, responsive};
 use iced::window::settings::PlatformSpecific;
-use iced::{Element, Fill, Size, Subscription};
-use iced::{Font, color};
+use iced::{Font, Element, Fill, Length, Size, Subscription};
 use iced::{Theme, keyboard};
+use terminal::TerminalView;
+use std::collections::HashMap;
 
 mod style;
-mod widget;
+mod terminal;
+
+const TERM_FONT_JET_BRAINS_BYTES: &[u8] = include_bytes!(
+    "../assets/fonts/JetBrains/JetBrainsMonoNerdFontMono-Bold.ttf"
+);
 
 pub fn main() -> iced::Result {
     iced::application("Frostty", Frostty::update, Frostty::view)
         .subscription(Frostty::subscription)
+        .antialiasing(false)
         .theme(Frostty::theme)
-        .settings(iced::settings::Settings {
-            default_font: iced::Font {
-                family: iced::font::Family::Monospace,
-                ..Default::default()
-            },
-            ..Default::default()
-        })
         .window(iced::window::Settings {
             platform_specific: PlatformSpecific {
                 application_id: "frostty".to_string(),
@@ -32,16 +28,18 @@ pub fn main() -> iced::Result {
             ..Default::default()
         })
         .window_size((790.0, 460.0))
-        .run()
+        .run_with(Frostty::new)
 }
 
 struct Frostty {
     panes: pane_grid::State<Pane>,
+    terminals: HashMap<u64, terminal::Terminal>,
+    term_settings: terminal::settings::Settings,
     panes_created: usize,
     focus: Option<pane_grid::Pane>,
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone)]
 enum Message {
     Split(pane_grid::Axis),
     SplitFocused,
@@ -51,30 +49,74 @@ enum Message {
     Resized(pane_grid::ResizeEvent),
     Close(pane_grid::Pane),
     CloseFocused,
+    Terminal(terminal::Event),
+    FontLoaded(Result<(), iced::font::Error>),
 }
 
 impl Frostty {
-    fn new() -> Self {
+    fn new() -> (Self, Task<Message>) {
         let (panes, _) = pane_grid::State::new(Pane::new(0));
+        let term_settings = terminal::settings::Settings {
+            font: terminal::settings::FontSettings {
+                size: 16.0,
+                font_type: Font {
+                    weight: Weight::Bold,
+                    family: Family::Name("JetBrainsMono Nerd Font Mono"),
+                    stretch: Stretch::Normal,
+                    ..Default::default()
+                },
+                ..Default::default()
+            },
+            theme: terminal::settings::ThemeSettings::default(),
+            backend: terminal::settings::BackendSettings {
+                program: std::env::var("SHELL")
+                    .expect("SHELL variable not defined")
+                    .to_string(),
+                ..Default::default()
+            },
+        };
 
-        Frostty {
-            panes,
-            panes_created: 1,
-            focus: None,
-        }
+        let term = terminal::Terminal::new(
+            0,
+            term_settings.clone(),
+        );
+        let mut terminals = HashMap::new();
+        terminals.insert(0, term);
+        
+        (
+            Frostty {
+                panes,
+                panes_created: 1,
+                focus: None,
+                terminals,
+                term_settings,
+            },
+            Task::batch(vec![iced::font::load(TERM_FONT_JET_BRAINS_BYTES)
+                .map(Message::FontLoaded)]),
+
+        )
     }
 
-    fn update(&mut self, message: Message) {
+    fn update(&mut self, message: Message) -> Task<Message> {
         match message {
+            Message::FontLoaded(_) => {},
             Message::Split(axis) => {
                 if let Some(pane) = self.focus {
                     let result = self.panes.split(axis, pane, Pane::new(self.panes_created));
+
+                    let terminal = terminal::Terminal::new(
+                        self.panes_created as u64,
+                        self.term_settings.clone(),
+                    );
+                    let command = TerminalView::focus(terminal.widget_id());
+                    self.terminals.insert(self.panes_created as u64, terminal);
 
                     if let Some((pane, _)) = result {
                         self.focus = Some(pane);
                     }
 
                     self.panes_created += 1;
+                    return command;
                 }
             }
             Message::SplitFocused => {
@@ -92,12 +134,20 @@ impl Frostty {
                         pane_grid::Axis::Horizontal
                     };
                     let result = self.panes.split(axis, pane, Pane::new(self.panes_created));
+                    
+                    let terminal = terminal::Terminal::new(
+                        self.panes_created as u64,
+                        self.term_settings.clone(),
+                    );
+                    let command = TerminalView::focus(terminal.widget_id());
+                    self.terminals.insert(self.panes_created as u64, terminal);
 
                     if let Some((pane, _)) = result {
                         self.focus = Some(pane);
                     }
 
                     self.panes_created += 1;
+                    return command;
                 }
             }
             Message::FocusAdjacent(direction) => {
@@ -108,7 +158,11 @@ impl Frostty {
                 }
             }
             Message::Clicked(pane) => {
+                let new_focused_pane = self.panes.get(pane).unwrap();
+                let new_focued_terminal = 
+                    self.terminals.get_mut(&(new_focused_pane.id as u64)).unwrap();
                 self.focus = Some(pane);
+                return TerminalView::focus(new_focued_terminal.widget_id());
             }
             Message::Resized(pane_grid::ResizeEvent { split, ratio }) => {
                 self.panes.resize(split, ratio);
@@ -133,17 +187,39 @@ impl Frostty {
                     }
                 }
             }
+            Message::Terminal(terminal::Event::CommandReceived(id, cmd)) => {
+                if let Some(terminal) = self.terminals.get_mut(&id) {
+                    if terminal.update(cmd) == terminal::actions::Action::Shutdown {
+                        if let Some(cur_pane) = self.focus {
+                            return self.update(Message::Close(cur_pane));
+                        }
+                    }
+                }
+            }
         }
+
+        Task::none()
     }
 
     fn subscription(&self) -> Subscription<Message> {
-        keyboard::on_key_press(|key_code, modifiers| {
-            if !modifiers.command() {
-                return None;
-            }
+        let mut subs = vec![];
+        for id in self.terminals.keys() {
+            let terminal = self.terminals.get(id).unwrap();
+            let term_event_stream = terminal::Subscription::event_stream(terminal.id);
+            subs.push(Subscription::run_with_id(terminal.id, term_event_stream).map(Message::Terminal));
+        }
 
-            handle_hotkey(key_code)
-        })
+        let key_sub = keyboard::on_key_press(|key_code, modifiers| {
+            if modifiers.control() && modifiers.shift() {
+                return handle_hotkey(key_code);
+            }
+            None
+        });
+
+        subs.push(key_sub);
+
+        Subscription::batch(subs)
+
     }
 
     fn view(&self) -> Element<Message> {
@@ -152,9 +228,8 @@ impl Frostty {
         let pane_grid = PaneGrid::new(&self.panes, |id, pane, _is_maximized| {
             let is_focused = focus == Some(id);
 
-            pane_grid::Content::new(responsive(move |size| {
-                pane.set_size(size);
-                view_content(pane)
+            pane_grid::Content::new(responsive(move |_size| {
+                view_content(pane.id as u64, &self.terminals)
             }))
             .style(if is_focused {
                 style::pane_focused
@@ -174,12 +249,6 @@ impl Frostty {
 
     fn theme(&self) -> Theme {
         Theme::CatppuccinMocha
-    }
-}
-
-impl Default for Frostty {
-    fn default() -> Self {
-        Frostty::new()
     }
 }
 
@@ -211,7 +280,6 @@ fn handle_hotkey(key: keyboard::Key) -> Option<Message> {
 #[derive(Clone, Copy)]
 struct Pane {
     id: usize,
-    size: Size,
     pub is_pinned: bool,
 }
 
@@ -219,34 +287,19 @@ impl Pane {
     fn new(id: usize) -> Self {
         Self {
             id,
-            size: Size::new(0.0, 0.0),
             is_pinned: false,
         }
     }
-    fn set_size(mut self, size: Size) -> Self {
-        self.size = size;
-        self
-    }
 }
 
-fn view_content<'a>(pane: &Pane) -> Element<'a, Message> {
-    //let content = terminal(">_ █").size(16);
-    let palette = terminal_palette(TerminalTheme::Dracula);
-    let content = rich_text([
-        span("test").color(palette.foreground.blue).font(Font {
-            weight: font::Weight::Bold,
-            ..Font::MONOSPACE
-        }),
-        span("::").color(palette.foreground.cyan).font(Font {
-            weight: font::Weight::Bold,
-            ..Font::MONOSPACE
-        }),
-        span("frostty$ ").color(palette.foreground.blue).font(Font {
-            weight: font::Weight::Bold,
-            ..Font::MONOSPACE
-        }),
-        span("█").color(palette.foreground.white),
-    ])
-    .size(16);
-    container(scrollable(content)).padding(5).into()
+fn view_content(
+    pane_id: u64,
+    terminals: &HashMap<u64, terminal::Terminal>,
+) -> Element<'_, Message> {
+    let terminal = terminals.get(&pane_id).expect("terminal with id not found");
+    container(TerminalView::show(terminal).map(Message::Terminal))
+        .width(Length::Fill)
+        .height(Length::Fill)
+        .padding(5)
+        .into()
 }
