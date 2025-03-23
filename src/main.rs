@@ -1,23 +1,24 @@
+use iced::Task;
 use iced::font::{Family, Stretch, Weight};
 use iced::widget::pane_grid::{self, PaneGrid};
-use iced::Task;
 use iced::widget::{container, responsive};
 use iced::window::settings::PlatformSpecific;
-use iced::{Font, Element, Fill, Length, Size, Subscription};
+use iced::{Element, Fill, Font, Length, Size, Subscription};
 use iced::{Theme, keyboard};
-use terminal::TerminalView;
 use std::collections::HashMap;
 use std::env;
+use terminal::TerminalView;
 
 mod style;
 mod terminal;
 
-const TERM_FONT_JET_BRAINS_BYTES: &[u8] = include_bytes!(
-    "../assets/fonts/JetBrains/JetBrainsMonoNerdFontMono-Bold.ttf"
-);
+const TERM_FONT_JET_BRAINS_BYTES: &[u8] =
+    include_bytes!("../assets/fonts/JetBrainsMono/JetBrainsMonoNerdFontMono-Bold.ttf");
 
 pub fn main() -> iced::Result {
-    unsafe { env::set_var("TERM", "frostty"); }
+    unsafe {
+        env::set_var("TERM", "frostty");
+    }
     iced::application("Frostty", Frostty::update, Frostty::view)
         .subscription(Frostty::subscription)
         .antialiasing(false)
@@ -60,9 +61,9 @@ impl Frostty {
         let (panes, pane) = pane_grid::State::new(Pane::new(0));
         let term_settings = terminal::settings::Settings {
             font: terminal::settings::FontSettings {
-                size: 16.0,
+                size: 14.0,
                 font_type: Font {
-                    weight: Weight::Bold,
+                    weight: Weight::Normal,
                     family: Family::Name("JetBrainsMono Nerd Font Mono"),
                     stretch: Stretch::Normal,
                     ..Default::default()
@@ -78,13 +79,10 @@ impl Frostty {
             },
         };
 
-        let term = terminal::Terminal::new(
-            0,
-            term_settings.clone(),
-        );
+        let term = terminal::Terminal::new(0, term_settings.clone());
         let mut terminals = HashMap::new();
         terminals.insert(0, term);
-        
+
         (
             Frostty {
                 panes,
@@ -93,15 +91,15 @@ impl Frostty {
                 terminals,
                 term_settings,
             },
-            Task::batch(vec![iced::font::load(TERM_FONT_JET_BRAINS_BYTES)
-                .map(Message::FontLoaded)]),
-
+            Task::batch(vec![
+                iced::font::load(TERM_FONT_JET_BRAINS_BYTES).map(Message::FontLoaded),
+            ]),
         )
     }
 
     fn update(&mut self, message: Message) -> Task<Message> {
         match message {
-            Message::FontLoaded(_) => {},
+            Message::FontLoaded(_) => {}
             Message::Split(axis) => {
                 if let Some(pane) = self.focus {
                     let result = self.panes.split(axis, pane, Pane::new(self.panes_created));
@@ -136,7 +134,7 @@ impl Frostty {
                         pane_grid::Axis::Horizontal
                     };
                     let result = self.panes.split(axis, pane, Pane::new(self.panes_created));
-                    
+
                     let terminal = terminal::Terminal::new(
                         self.panes_created as u64,
                         self.term_settings.clone(),
@@ -161,8 +159,10 @@ impl Frostty {
             }
             Message::Clicked(pane) => {
                 let new_focused_pane = self.panes.get(pane).unwrap();
-                let new_focued_terminal = 
-                    self.terminals.get_mut(&(new_focused_pane.id as u64)).unwrap();
+                let new_focued_terminal = self
+                    .terminals
+                    .get_mut(&(new_focused_pane.id as u64))
+                    .unwrap();
                 self.focus = Some(pane);
                 return TerminalView::focus(new_focued_terminal.widget_id());
             }
@@ -208,7 +208,9 @@ impl Frostty {
         for id in self.terminals.keys() {
             let terminal = self.terminals.get(id).unwrap();
             let term_event_stream = terminal::Subscription::event_stream(terminal.id);
-            subs.push(Subscription::run_with_id(terminal.id, term_event_stream).map(Message::Terminal));
+            subs.push(
+                Subscription::run_with_id(terminal.id, term_event_stream).map(Message::Terminal),
+            );
         }
 
         let key_sub = keyboard::on_key_press(|key_code, modifiers| {
@@ -221,7 +223,6 @@ impl Frostty {
         subs.push(key_sub);
 
         Subscription::batch(subs)
-
     }
 
     fn view(&self) -> Element<Message> {

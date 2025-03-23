@@ -20,6 +20,9 @@ appdata-dst := clean(rootdir / prefix) / 'share' / 'appdata' / appdata
 icons-src := 'extra' / 'icons' / 'hicolor' / 'frostty.png'
 icons-dst := clean(rootdir / prefix) / 'share' / 'icons' / 'hicolor'
 
+fonts-src := 'assets' / 'fonts' / 'JetBrainsMono'
+fonts-dst := clean(rootdir / prefix) / 'share' / 'fonts'
+
 info := 'extra' / 'frostty.info'
 
 default: build-release
@@ -40,7 +43,9 @@ install:
     install -Dm0644 {{desktop-src}} {{desktop-dst}}
     install -Dm0644 {{appdata-src}} {{appdata-dst}}
     install -Dm0644 {{icons-src}} {{icons-dst}}
+    sudo cp -r {{fonts-src}} {{fonts-dst}}
     tic -x {{info}}
+    fc-cache -fv
 
 uninstall:
     rm {{bin-dst}} {{desktop-dst}} {{icons-dst}}
