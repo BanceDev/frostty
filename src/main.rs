@@ -205,14 +205,6 @@ impl Frostty {
 
     fn subscription(&self) -> Subscription<Message> {
         let mut subs = vec![];
-        for id in self.terminals.keys() {
-            let terminal = self.terminals.get(id).unwrap();
-            let term_event_stream = terminal::Subscription::event_stream(terminal.id);
-            subs.push(
-                Subscription::run_with_id(terminal.id, term_event_stream).map(Message::Terminal),
-            );
-        }
-
         let key_sub = keyboard::on_key_press(|key_code, modifiers| {
             if modifiers.control() && modifiers.shift() {
                 return handle_hotkey(key_code);
@@ -221,6 +213,14 @@ impl Frostty {
         });
 
         subs.push(key_sub);
+
+        for id in self.terminals.keys() {
+            let terminal = self.terminals.get(id).unwrap();
+            let term_event_stream = terminal::Subscription::event_stream(terminal.id);
+            subs.push(
+                Subscription::run_with_id(terminal.id, term_event_stream).map(Message::Terminal),
+            );
+        }
 
         Subscription::batch(subs)
     }
