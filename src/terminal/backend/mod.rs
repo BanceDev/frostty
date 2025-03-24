@@ -488,7 +488,7 @@ impl Backend {
 
     pub fn sync_cursor(&mut self) {
         let term = self.term.clone();
-        let mut term = term.lock();
+        let term = term.lock();
 
         self.last_content.cursor_style = term.cursor_style().clone();
     }

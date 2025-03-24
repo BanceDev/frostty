@@ -44,7 +44,6 @@ struct Frostty {
 
 #[derive(Debug, Clone)]
 enum Message {
-    Split(pane_grid::Axis),
     SplitFocused,
     FocusAdjacent(pane_grid::Direction),
     Clicked(pane_grid::Pane),
@@ -100,25 +99,6 @@ impl Frostty {
     fn update(&mut self, message: Message) -> Task<Message> {
         match message {
             Message::FontLoaded(_) => {}
-            Message::Split(axis) => {
-                if let Some(pane) = self.focus {
-                    let result = self.panes.split(axis, pane, Pane::new(self.panes_created));
-
-                    let terminal = terminal::Terminal::new(
-                        self.panes_created as u64,
-                        self.term_settings.clone(),
-                    );
-                    let command = TerminalView::focus(terminal.widget_id());
-                    self.terminals.insert(self.panes_created as u64, terminal);
-
-                    if let Some((pane, _)) = result {
-                        self.focus = Some(pane);
-                    }
-
-                    self.panes_created += 1;
-                    return command;
-                }
-            }
             Message::SplitFocused => {
                 if let Some(pane) = self.focus {
                     let size = self
