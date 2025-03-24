@@ -106,6 +106,9 @@ impl Terminal {
     }
 
     fn redraw(&mut self) {
+        if let Some(ref mut backend) = self.backend {
+            backend.sync_cursor();
+        }
         self.cache.clear();
     }
 }

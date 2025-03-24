@@ -457,7 +457,7 @@ impl Widget<Event, Theme, iced::Renderer> for TerminalView<'_> {
                             CursorShape::Hidden => Size::new(0.0, 0.0),
                         };
                         let cursor_shape = match content.cursor_style.shape {
-                            CursorShape::Underline => Path::rectangle(Point::new(x, cell_height - 1.0), cursor_size),
+                            CursorShape::Underline => Path::rectangle(Point::new(x, y + cell_height - 1.0), cursor_size),
                             CursorShape::HollowBlock => {
                                 Path::new(|b| {
                                     b.move_to(Point::new(x, y));

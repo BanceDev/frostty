@@ -486,6 +486,13 @@ impl Backend {
         self.internal_sync(&mut term);
     }
 
+    pub fn sync_cursor(&mut self) {
+        let term = self.term.clone();
+        let mut term = term.lock();
+
+        self.last_content.cursor_style = term.cursor_style().clone();
+    }
+
     fn internal_sync(&mut self, terminal: &mut Term<EventProxy>) {
         let selectable_range = match &terminal.selection {
             Some(s) => s.to_range(terminal),
