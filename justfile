@@ -17,7 +17,7 @@ appdata := appid + '.appdata.xml'
 appdata-src := 'extra' / 'linux' / appdata
 appdata-dst := clean(rootdir / prefix) / 'share' / 'appdata' / appdata
 
-icons-src := 'extra' / 'icons' / 'hicolor' / 'frostty.png'
+icons-src := 'extra' / 'icons' / 'hicolor'
 icons-dst := clean(rootdir / prefix) / 'share' / 'icons' / 'hicolor'
 
 fonts-src := 'assets' / 'fonts' / 'JetBrainsMono'
@@ -42,7 +42,9 @@ install:
     install -Dm0755 {{bin-src}} {{bin-dst}}
     install -Dm0644 {{desktop-src}} {{desktop-dst}}
     install -Dm0644 {{appdata-src}} {{appdata-dst}}
-    install -Dm0644 {{icons-src}} {{icons-dst}}
+    for size in `ls {{icons-src}}`; do \
+        install -Dm0644 "{{icons-src}}/$size/apps/frostty.png" "{{icons-dst}}/$size/apps/frostty.png"; \
+    done
     sudo cp -r {{fonts-src}} {{fonts-dst}}
     tic -x {{info}}
     fc-cache -fv

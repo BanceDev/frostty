@@ -19,7 +19,7 @@ pub fn main() -> iced::Result {
     unsafe {
         env::set_var("TERM", "frostty");
     }
-    iced::application("Frostty", Frostty::update, Frostty::view)
+    iced::application("frostty", Frostty::update, Frostty::view)
         .subscription(Frostty::subscription)
         .antialiasing(false)
         .theme(Frostty::theme)
