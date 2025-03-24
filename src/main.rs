@@ -153,7 +153,13 @@ impl Frostty {
             Message::FocusAdjacent(direction) => {
                 if let Some(pane) = self.focus {
                     if let Some(adjacent) = self.panes.adjacent(pane, direction) {
+                        let new_focused_pane = self.panes.get(adjacent).unwrap();
+                        let new_focued_terminal = self
+                            .terminals
+                            .get_mut(&(new_focused_pane.id as u64))
+                            .unwrap();
                         self.focus = Some(adjacent);
+                        return TerminalView::focus(new_focued_terminal.widget_id());
                     }
                 }
             }
@@ -175,7 +181,13 @@ impl Frostty {
             Message::Dragged(_) => {}
             Message::Close(pane) => {
                 if let Some((_, sibling)) = self.panes.close(pane) {
+                    let new_focused_pane = self.panes.get(sibling).unwrap();
+                    let new_focued_terminal = self
+                        .terminals
+                        .get_mut(&(new_focused_pane.id as u64))
+                        .unwrap();
                     self.focus = Some(sibling);
+                    return TerminalView::focus(new_focued_terminal.widget_id());
                 }
             }
             Message::CloseFocused => {

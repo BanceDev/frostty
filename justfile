@@ -47,5 +47,8 @@ install:
     tic -x {{info}}
     fc-cache -fv
 
+update:
+    install -Dm0755 {{bin-src}} {{bin-dst}}
+
 uninstall:
     rm {{bin-dst}} {{desktop-dst}} {{icons-dst}}
