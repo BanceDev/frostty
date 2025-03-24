@@ -526,6 +526,7 @@ impl Widget<Event, Theme, iced::Renderer> for TerminalView<'_> {
         }
 
         if !state.is_focused {
+            state.keyboard_modifiers = Modifiers::empty();
             return iced::event::Status::Ignored;
         }
 

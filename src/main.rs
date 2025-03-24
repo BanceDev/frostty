@@ -255,7 +255,7 @@ impl Frostty {
 
 fn handle_hotkey(key: keyboard::Key) -> Option<Message> {
     use keyboard::key::{self, Key};
-    use pane_grid::{Axis, Direction};
+    use pane_grid::Direction;
 
     match key.as_ref() {
         // TODO: config file for this
