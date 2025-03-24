@@ -195,7 +195,13 @@ impl Frostty {
                     if let Some(Pane { is_pinned, .. }) = self.panes.get(pane) {
                         if !is_pinned {
                             if let Some((_, sibling)) = self.panes.close(pane) {
+                                let new_focused_pane = self.panes.get(sibling).unwrap();
+                                let new_focued_terminal = self
+                                    .terminals
+                                    .get_mut(&(new_focused_pane.id as u64))
+                                    .unwrap();
                                 self.focus = Some(sibling);
+                                return TerminalView::focus(new_focued_terminal.widget_id());
                             }
                         }
                     }
