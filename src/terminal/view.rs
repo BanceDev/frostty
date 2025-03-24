@@ -7,7 +7,9 @@ use crate::terminal::{Command, Event, Terminal};
 use alacritty_terminal::index::Point as TerminalGridPoint;
 use alacritty_terminal::selection::SelectionType;
 use alacritty_terminal::term::{TermMode, cell};
+use alacritty_terminal::vte::ansi::CursorShape;
 use iced::alignment::{Horizontal, Vertical};
+use iced::clipboard::write;
 use iced::mouse::{Cursor, ScrollDelta};
 use iced::widget::canvas::{Path, Text};
 use iced::widget::container;
@@ -447,14 +449,35 @@ impl Widget<Event, Theme, iced::Renderer> for TerminalView<'_> {
                     // Handle cursor rendering
                     if content.grid.cursor.point == indexed.point {
                         let cursor_color = self.term.theme.get_color(content.cursor.fg);
-                        let cursor_rect = Path::rectangle(Point::new(x, y), cell_size);
-                        frame.fill(&cursor_rect, cursor_color);
+                        let cursor_size = match content.cursor_style.shape {
+                            CursorShape::Block => cell_size,
+                            CursorShape::Beam => Size::new(1.0, cell_height),
+                            CursorShape::Underline => Size::new(cell_width, 1.0),
+                            CursorShape::HollowBlock => cell_size,
+                            CursorShape::Hidden => Size::new(0.0, 0.0),
+                        };
+                        let cursor_shape = match content.cursor_style.shape {
+                            CursorShape::Underline => Path::rectangle(Point::new(x, cell_height - 1.0), cursor_size),
+                            CursorShape::HollowBlock => {
+                                Path::new(|b| {
+                                    b.move_to(Point::new(x, y));
+                                    b.line_to(Point::new(cell_width, y));
+                                    b.line_to(Point::new(cell_width, cell_height));
+                                    b.line_to(Point::new(x, cell_height));
+                                    b.line_to(Point::new(x, y));
+                                })
+                            }
+                            _ => Path::rectangle(Point::new(x, y), cursor_size),
+
+                        };
+                        frame.fill(&cursor_shape, cursor_color);
                     }
 
                     // Draw text
                     if indexed.c != ' ' && indexed.c != '\t' {
                         if content.grid.cursor.point == indexed.point
-                            && content.terminal_mode.contains(TermMode::APP_CURSOR)
+                            && content.terminal_mode.contains(TermMode::APP_CURSOR) 
+                            && content.cursor_style.shape == CursorShape::Block
                         {
                             fg = bg;
                         }

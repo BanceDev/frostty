@@ -11,6 +11,7 @@ use alacritty_terminal::term::search::{Match, RegexIter, RegexSearch};
 use alacritty_terminal::term::{
     self, Term, TermMode, cell::Cell, test::TermSize, viewport_to_point,
 };
+use alacritty_terminal::vte::ansi::CursorStyle;
 use alacritty_terminal::{Grid, tty};
 use iced::keyboard::Modifiers;
 use iced_core::Size;
@@ -158,6 +159,7 @@ impl Backend {
         let event_proxy = EventProxy(event_sender);
 
         let mut term = Term::new(config, &terminal_size, event_proxy.clone());
+        let cursor_style = term.cursor_style();
         let cursor = term.grid_mut().cursor_cell().clone();
         let initial_content = RenderableContent {
             grid: term.grid().clone(),
@@ -165,6 +167,7 @@ impl Backend {
             terminal_mode: *term.mode(),
             terminal_size,
             cursor: cursor.clone(),
+            cursor_style: cursor_style.clone(),
             hovered_hyperlink: None,
         };
 
@@ -490,9 +493,11 @@ impl Backend {
         };
 
         let cursor = terminal.grid_mut().cursor_cell().clone();
+        let cursor_style = terminal.cursor_style();
         self.last_content.grid = terminal.grid().clone();
         self.last_content.selectable_range = selectable_range;
         self.last_content.cursor = cursor.clone();
+        self.last_content.cursor_style = cursor_style.clone();
         self.last_content.terminal_mode = *terminal.mode();
         self.last_content.terminal_size = self.size;
     }
@@ -537,6 +542,7 @@ pub struct RenderableContent {
     pub hovered_hyperlink: Option<RangeInclusive<Point>>,
     pub selectable_range: Option<SelectionRange>,
     pub cursor: Cell,
+    pub cursor_style: CursorStyle,
     pub terminal_mode: TermMode,
     pub terminal_size: TerminalSize,
 }
@@ -548,6 +554,7 @@ impl Default for RenderableContent {
             hovered_hyperlink: None,
             selectable_range: None,
             cursor: Cell::default(),
+            cursor_style: CursorStyle::default(),
             terminal_mode: TermMode::empty(),
             terminal_size: TerminalSize::default(),
         }
