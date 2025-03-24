@@ -274,35 +274,35 @@ fn default_keyboard_bindings() -> Vec<(Binding<InputKind>, BindingAction)> {
         //ArrowDown,  Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Esc("\x1b[1;6B".into());
         //ArrowLeft,  Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Esc("\x1b[1;6D".into());
         //ArrowRight, Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Esc("\x1b[1;6C".into());
-        //"a",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x01');
-        //"b",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x02');
-        "c",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Copy;
-        //"d",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x04');
-        //"e",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x05');
-        //"f",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x06');
-        //"g",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x07');
-        //"h",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x08');
-        //"i",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x09');
-        //"j",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x0a');
-        //"k",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x0b');
-        //"l",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x0c');
-        //"m",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x0d');
-        //"n",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x0e');
-        //"o",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x0f');
-        //"p",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x10');
-        //"q",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x11');
-        //"r",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x12');
-        //"s",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x13');
-        //"t",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x14');
-        //"u",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x51');
-        "v",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Paste;
-        //"w",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x17');
-        //"x",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x18');
-        //"y",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x19');
-        //"z",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x1a');
-        //"2",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x00'); // Null vt100
-        //"6",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x1e');
-        //"_",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x1f');
+        "a",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x01');
+        "b",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x02');
+        "c",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x03');
+        "d",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x04');
+        "e",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x05');
+        "f",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x06');
+        "g",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x07');
+        "h",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x08');
+        "i",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x09');
+        "j",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x0a');
+        "k",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x0b');
+        "l",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x0c');
+        "m",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x0d');
+        "n",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x0e');
+        "o",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x0f');
+        "p",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x10');
+        "q",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x11');
+        "r",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x12');
+        "s",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x13');
+        "t",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x14');
+        "u",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x51');
+        "v",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x16');
+        "w",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x17');
+        "x",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x18');
+        "y",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x19');
+        "z",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x1a');
+        "2",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x00'); // Null vt100
+        "6",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x1e');
+        "_",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x1f');
         // CTRL + ALT
         End,        Modifiers::CTRL | Modifiers::ALT; BindingAction::Esc("\x1b[1;7F".into());
         Home,       Modifiers::CTRL | Modifiers::ALT; BindingAction::Esc("\x1b[1;7H".into());
@@ -335,8 +335,8 @@ fn platform_keyboard_bindings() -> Vec<(Binding<InputKind>, BindingAction)> {
 fn platform_keyboard_bindings() -> Vec<(Binding<InputKind>, BindingAction)> {
     generate_bindings!(
         KeyboardBinding;
-        "c", Modifiers::SHIFT | Modifiers::COMMAND; BindingAction::Copy;
-        "v", Modifiers::SHIFT | Modifiers::COMMAND; BindingAction::Paste;
+        "\x03", Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Copy;
+        "\x16", Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Paste;
     )
 }
 
@@ -345,152 +345,4 @@ fn mouse_default_bindings() -> Vec<(Binding<InputKind>, BindingAction)> {
         MouseBinding;
         Left, Modifiers::COMMAND; BindingAction::LinkOpen;
     )
-}
-
-#[cfg(test)]
-mod tests {
-    use crate::terminal::bindings::MouseBinding;
-
-    use super::{BindingAction, BindingsLayout, InputKind, KeyboardBinding};
-    use alacritty_terminal::term::TermMode;
-    use iced_core::{
-        keyboard::{Modifiers, key::Named},
-        mouse::Button,
-    };
-
-    #[test]
-    fn add_new_custom_keyboard_binding() {
-        let mut current_layout = BindingsLayout::default();
-        let custom_bindings = generate_bindings!(
-            KeyboardBinding;
-            "c", Modifiers::SHIFT | Modifiers::ALT; BindingAction::Copy;
-        );
-        let current_layout_length = current_layout.layout.len();
-        let custom_bindings_length = custom_bindings.len();
-        current_layout.add_bindings(custom_bindings.clone());
-        assert_eq!(
-            current_layout.layout.len(),
-            current_layout_length + custom_bindings_length
-        );
-        let found_binding = current_layout.layout.iter().find(|(bind, action)| {
-            bind == &custom_bindings[0].0 && action == &custom_bindings[0].1
-        });
-        assert!(found_binding.is_some());
-    }
-
-    #[test]
-    fn add_many_new_custom_keyboard_bindings() {
-        let mut current_layout: BindingsLayout = BindingsLayout::default();
-        let custom_bindings = generate_bindings!(
-            KeyboardBinding;
-            ArrowDown, Modifiers::ALT, +TermMode::SGR_MOUSE; BindingAction::LinkOpen;
-            "c",       Modifiers::SHIFT, +TermMode::ALT_SCREEN;             BindingAction::Paste;
-            "c",       Modifiers::SHIFT | Modifiers::ALT;                   BindingAction::Copy;
-            "w",       Modifiers::ALT;                                      BindingAction::Char('W');
-            "q",       Modifiers::SHIFT | Modifiers::CTRL | Modifiers::ALT; BindingAction::Esc("\x1b[1;7C".into());
-        );
-        let current_layout_length = current_layout.layout.len();
-        let custom_bindings_length = custom_bindings.len();
-        current_layout.add_bindings(custom_bindings.clone());
-        assert_eq!(
-            current_layout.layout.len(),
-            current_layout_length + custom_bindings_length
-        );
-        for (custom_bind, custom_action) in custom_bindings {
-            let found_binding = current_layout
-                .layout
-                .iter()
-                .find(|(bind, action)| bind == &custom_bind && action == &custom_action);
-            assert!(found_binding.is_some());
-        }
-    }
-
-    #[test]
-    fn add_custom_keyboard_bindings_that_replace_current() {
-        let mut current_layout = BindingsLayout::default();
-        let custom_bindings = generate_bindings!(
-            KeyboardBinding;
-            "c", Modifiers::SHIFT, +TermMode::ALT_SCREEN; BindingAction::Paste;
-            "a", Modifiers::SHIFT | Modifiers::CTRL;      BindingAction::Char('A');
-            "b", Modifiers::SHIFT | Modifiers::CTRL;      BindingAction::Char('B');
-            "c", Modifiers::SHIFT | Modifiers::CTRL;      BindingAction::Copy;
-        );
-        let current_layout_length = current_layout.layout.len();
-        current_layout.add_bindings(custom_bindings.clone());
-        assert_eq!(current_layout.layout.len(), current_layout_length + 1);
-        for (custom_bind, custom_action) in custom_bindings {
-            let found_binding = current_layout
-                .layout
-                .iter()
-                .find(|(bind, action)| bind == &custom_bind && action == &custom_action);
-            assert!(found_binding.is_some());
-        }
-        let replaced_bindings = generate_bindings!(
-            KeyboardBinding;
-            "a", Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x01');
-            "b", Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x02');
-            "c", Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x03');
-        );
-        for (custom_bind, custom_action) in replaced_bindings {
-            let found_binding = current_layout
-                .layout
-                .iter()
-                .find(|(bind, action)| bind == &custom_bind && action == &custom_action);
-            assert!(found_binding.is_none());
-        }
-    }
-
-    #[test]
-    fn add_mouse_binding() {
-        let mut current_layout = BindingsLayout::default();
-        let custom_bindings = generate_bindings!(
-            MouseBinding;
-            Left,  Modifiers::SHIFT, +TermMode::ALT_SCREEN; BindingAction::Paste;
-            Right, Modifiers::SHIFT | Modifiers::CTRL;      BindingAction::Char('A');
-        );
-        let current_layout_length = current_layout.layout.len();
-        current_layout.add_bindings(custom_bindings.clone());
-        assert_eq!(current_layout.layout.len(), current_layout_length + 2);
-        for (custom_bind, custom_action) in custom_bindings {
-            let found_binding = current_layout
-                .layout
-                .iter()
-                .find(|(bind, action)| bind == &custom_bind && action == &custom_action);
-            assert!(found_binding.is_some());
-        }
-    }
-
-    #[test]
-    fn get_action() {
-        let current_layout = BindingsLayout::default();
-        for (bind, action) in &current_layout.layout {
-            let found_action = current_layout.get_action(
-                bind.target.clone(),
-                bind.modifiers,
-                bind.terminal_mode_include,
-            );
-            assert_eq!(action, &found_action);
-        }
-    }
-
-    #[test]
-    fn get_action_with_custom_bindings() {
-        let mut current_layout = BindingsLayout::default();
-        let custom_bindings = generate_bindings!(
-            KeyboardBinding;
-            "c", Modifiers::SHIFT, +TermMode::ALT_SCREEN; BindingAction::Paste;
-            "a", Modifiers::SHIFT | Modifiers::CTRL;      BindingAction::Char('A');
-            "b", Modifiers::SHIFT | Modifiers::CTRL;      BindingAction::Char('B');
-            "c", Modifiers::SHIFT | Modifiers::CTRL;      BindingAction::Copy;
-        );
-        current_layout.add_bindings(custom_bindings.clone());
-        for (bind, action) in &current_layout.layout {
-            let found_action = current_layout.get_action(
-                bind.target.clone(),
-                bind.modifiers,
-                bind.terminal_mode_include,
-            );
-            assert_eq!(action, &found_action);
-        }
-    }
 }

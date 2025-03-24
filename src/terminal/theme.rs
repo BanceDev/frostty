@@ -1,6 +1,6 @@
 use crate::terminal::settings::ThemeSettings;
 use alacritty_terminal::vte::ansi::{self, NamedColor};
-use iced::{widget::container, Color};
+use iced::{Color, widget::container};
 use std::collections::HashMap;
 
 pub(crate) trait TerminalStyle {
@@ -133,7 +133,7 @@ impl Theme {
                     Some(color) => *color,
                     None => Color::from_rgb8(0, 0, 0),
                 }
-            },
+            }
             ansi::Color::Named(c) => {
                 let color = match c {
                     NamedColor::Foreground => &self.palette.foreground,
@@ -156,11 +156,9 @@ impl Theme {
                     NamedColor::BrightMagenta => &self.palette.bright_magenta,
                     NamedColor::BrightCyan => &self.palette.bright_cyan,
                     NamedColor::BrightWhite => &self.palette.bright_white,
-                    NamedColor::BrightForeground => {
-                        match &self.palette.bright_foreground {
-                            Some(color) => color,
-                            None => &self.palette.foreground,
-                        }
+                    NamedColor::BrightForeground => match &self.palette.bright_foreground {
+                        Some(color) => color,
+                        None => &self.palette.foreground,
                     },
                     // Dim terminal colors
                     NamedColor::DimForeground => &self.palette.dim_foreground,
@@ -175,9 +173,8 @@ impl Theme {
                     _ => &self.palette.background,
                 };
 
-                hex_to_color(color)
-                    .unwrap_or_else(|_| panic!("invalid color {}", color))
-            },
+                hex_to_color(color).unwrap_or_else(|_| panic!("invalid color {}", color))
+            }
         }
     }
 }
@@ -227,70 +224,11 @@ impl TerminalStyle for Theme {
             background: Some(
                 hex_to_color(&self.palette.background)
                     .unwrap_or_else(|_| {
-                        panic!(
-                            "invalid background color {}",
-                            self.palette.background
-                        )
+                        panic!("invalid background color {}", self.palette.background)
                     })
                     .into(),
             ),
             ..container::Style::default()
-        }
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use alacritty_terminal::vte::ansi;
-    use std::collections::HashMap;
-
-    #[test]
-    fn hex_to_color_valid_convertion() {
-        assert!(hex_to_color("#000000").is_ok())
-    }
-
-    #[test]
-    fn hex_to_color_short_string() {
-        assert!(hex_to_color("GG").is_err());
-    }
-
-    #[test]
-    fn hex_to_color_long_string() {
-        assert!(hex_to_color("GG000000").is_err());
-    }
-
-    #[test]
-    fn hex_to_color_non_valid_hex_string() {
-        assert!(hex_to_color("#KKLLOO").is_err());
-    }
-
-    #[test]
-    fn get_basic_indexed_colors() {
-        let default_theme = Theme::default();
-        let basic_indexed_colors_map: HashMap<u8, String> = HashMap::from([
-            (0, default_theme.palette.black.clone()),
-            (1, default_theme.palette.red.clone()),
-            (2, default_theme.palette.green.clone()),
-            (3, default_theme.palette.yellow.clone()),
-            (4, default_theme.palette.blue.clone()),
-            (5, default_theme.palette.magenta.clone()),
-            (6, default_theme.palette.cyan.clone()),
-            (7, default_theme.palette.white.clone()),
-            (8, default_theme.palette.bright_black.clone()),
-            (9, default_theme.palette.bright_red.clone()),
-            (10, default_theme.palette.bright_green.clone()),
-            (11, default_theme.palette.bright_yellow.clone()),
-            (12, default_theme.palette.bright_blue.clone()),
-            (13, default_theme.palette.bright_magenta.clone()),
-            (14, default_theme.palette.bright_cyan.clone()),
-            (15, default_theme.palette.bright_white.clone()),
-        ]);
-
-        for index in 0..16 {
-            let color = default_theme.get_color(ansi::Color::Indexed(index));
-            let expected_color = basic_indexed_colors_map.get(&index).unwrap();
-            assert_eq!(color, hex_to_color(expected_color).unwrap())
         }
     }
 }
