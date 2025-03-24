@@ -279,8 +279,6 @@ fn handle_hotkey(key: keyboard::Key) -> Option<Message> {
 
     match key.as_ref() {
         // TODO: config file for this
-        Key::Character("h") => Some(Message::Split(Axis::Horizontal)),
-        Key::Character("v") => Some(Message::Split(Axis::Vertical)),
         Key::Character("n") => Some(Message::SplitFocused),
         Key::Character("q") => Some(Message::CloseFocused),
         Key::Named(key) => {

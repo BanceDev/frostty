@@ -1,6 +1,6 @@
 use alacritty_terminal::term::TermMode;
 use iced_core::{
-    keyboard::{key::Named, Modifiers},
+    keyboard::{Modifiers, key::Named},
     mouse::Button,
 };
 
@@ -102,10 +102,7 @@ impl BindingsLayout {
         layout
     }
 
-    pub(crate) fn add_bindings(
-        &mut self,
-        bindings: Vec<(Binding<InputKind>, BindingAction)>,
-    ) {
+    pub(crate) fn add_bindings(&mut self, bindings: Vec<(Binding<InputKind>, BindingAction)>) {
         for (binding, action) in bindings {
             match self
                 .layout
@@ -270,41 +267,42 @@ fn default_keyboard_bindings() -> Vec<(Binding<InputKind>, BindingAction)> {
         ArrowLeft,  Modifiers::SHIFT | Modifiers::ALT; BindingAction::Esc("\x1b[1;4D".into());
         ArrowRight, Modifiers::SHIFT | Modifiers::ALT; BindingAction::Esc("\x1b[1;4C".into());
         // SHIFT + CTRL
-        End,        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Esc("\x1b[1;6F".into());
-        Home,       Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Esc("\x1b[1;6H".into());
-        ArrowUp,    Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Esc("\x1b[1;6A".into());
-        ArrowDown,  Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Esc("\x1b[1;6B".into());
-        ArrowLeft,  Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Esc("\x1b[1;6D".into());
-        ArrowRight, Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Esc("\x1b[1;6C".into());
-        "a",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x01');
-        "b",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x02');
-        "c",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x03');
-        "d",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x04');
-        "e",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x05');
-        "f",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x06');
-        "g",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x07');
-        "h",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x08');
-        "i",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x09');
-        "j",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x0a');
-        "k",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x0b');
-        "l",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x0c');
-        "m",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x0d');
-        "n",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x0e');
-        "o",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x0f');
-        "p",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x10');
-        "q",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x11');
-        "r",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x12');
-        "s",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x13');
-        "t",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x14');
-        "u",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x51');
-        "v",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x16');
-        "w",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x17');
-        "x",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x18');
-        "y",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x19');
-        "z",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x1a');
-        "2",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x00'); // Null vt100
-        "6",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x1e');
-        "_",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x1f');
+        // unbound all for now since I want to reserve for appplication level bindings
+        //End,        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Esc("\x1b[1;6F".into());
+        //Home,       Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Esc("\x1b[1;6H".into());
+        //ArrowUp,    Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Esc("\x1b[1;6A".into());
+        //ArrowDown,  Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Esc("\x1b[1;6B".into());
+        //ArrowLeft,  Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Esc("\x1b[1;6D".into());
+        //ArrowRight, Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Esc("\x1b[1;6C".into());
+        //"a",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x01');
+        //"b",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x02');
+        "c",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Copy;
+        //"d",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x04');
+        //"e",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x05');
+        //"f",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x06');
+        //"g",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x07');
+        //"h",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x08');
+        //"i",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x09');
+        //"j",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x0a');
+        //"k",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x0b');
+        //"l",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x0c');
+        //"m",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x0d');
+        //"n",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x0e');
+        //"o",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x0f');
+        //"p",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x10');
+        //"q",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x11');
+        //"r",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x12');
+        //"s",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x13');
+        //"t",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x14');
+        //"u",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x51');
+        "v",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Paste;
+        //"w",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x17');
+        //"x",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x18');
+        //"y",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x19');
+        //"z",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x1a');
+        //"2",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x00'); // Null vt100
+        //"6",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x1e');
+        //"_",        Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x1f');
         // CTRL + ALT
         End,        Modifiers::CTRL | Modifiers::ALT; BindingAction::Esc("\x1b[1;7F".into());
         Home,       Modifiers::CTRL | Modifiers::ALT; BindingAction::Esc("\x1b[1;7H".into());
@@ -356,7 +354,7 @@ mod tests {
     use super::{BindingAction, BindingsLayout, InputKind, KeyboardBinding};
     use alacritty_terminal::term::TermMode;
     use iced_core::{
-        keyboard::{key::Named, Modifiers},
+        keyboard::{Modifiers, key::Named},
         mouse::Button,
     };
 
@@ -374,10 +372,9 @@ mod tests {
             current_layout.layout.len(),
             current_layout_length + custom_bindings_length
         );
-        let found_binding =
-            current_layout.layout.iter().find(|(bind, action)| {
-                bind == &custom_bindings[0].0 && action == &custom_bindings[0].1
-            });
+        let found_binding = current_layout.layout.iter().find(|(bind, action)| {
+            bind == &custom_bindings[0].0 && action == &custom_bindings[0].1
+        });
         assert!(found_binding.is_some());
     }
 
@@ -400,10 +397,10 @@ mod tests {
             current_layout_length + custom_bindings_length
         );
         for (custom_bind, custom_action) in custom_bindings {
-            let found_binding =
-                current_layout.layout.iter().find(|(bind, action)| {
-                    bind == &custom_bind && action == &custom_action
-                });
+            let found_binding = current_layout
+                .layout
+                .iter()
+                .find(|(bind, action)| bind == &custom_bind && action == &custom_action);
             assert!(found_binding.is_some());
         }
     }
@@ -422,10 +419,10 @@ mod tests {
         current_layout.add_bindings(custom_bindings.clone());
         assert_eq!(current_layout.layout.len(), current_layout_length + 1);
         for (custom_bind, custom_action) in custom_bindings {
-            let found_binding =
-                current_layout.layout.iter().find(|(bind, action)| {
-                    bind == &custom_bind && action == &custom_action
-                });
+            let found_binding = current_layout
+                .layout
+                .iter()
+                .find(|(bind, action)| bind == &custom_bind && action == &custom_action);
             assert!(found_binding.is_some());
         }
         let replaced_bindings = generate_bindings!(
@@ -435,10 +432,10 @@ mod tests {
             "c", Modifiers::SHIFT | Modifiers::CTRL; BindingAction::Char('\x03');
         );
         for (custom_bind, custom_action) in replaced_bindings {
-            let found_binding =
-                current_layout.layout.iter().find(|(bind, action)| {
-                    bind == &custom_bind && action == &custom_action
-                });
+            let found_binding = current_layout
+                .layout
+                .iter()
+                .find(|(bind, action)| bind == &custom_bind && action == &custom_action);
             assert!(found_binding.is_none());
         }
     }
@@ -455,10 +452,10 @@ mod tests {
         current_layout.add_bindings(custom_bindings.clone());
         assert_eq!(current_layout.layout.len(), current_layout_length + 2);
         for (custom_bind, custom_action) in custom_bindings {
-            let found_binding =
-                current_layout.layout.iter().find(|(bind, action)| {
-                    bind == &custom_bind && action == &custom_action
-                });
+            let found_binding = current_layout
+                .layout
+                .iter()
+                .find(|(bind, action)| bind == &custom_bind && action == &custom_action);
             assert!(found_binding.is_some());
         }
     }
