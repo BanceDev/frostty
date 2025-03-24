@@ -7,7 +7,6 @@
 </p>
 
 <h1 align="center">Frostty - A GPU accelerated terminal emulator for people who get things done</h1>
----
 
 ## About
 
