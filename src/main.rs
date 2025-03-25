@@ -251,33 +251,26 @@ impl Frostty {
     }
 
     fn theme(&self) -> Theme {
-        if let Some(config) = config::Config::new() {
-            if let Some(colors) = config.colors {
-                if let Some(app) = colors.app {
-                    let background = app.background;
-                    let primary = app.active;
-                    let text = app.inactive;
-                    let theme = theme::Custom::new(
-                        "Config".to_string(),
-                        Palette {
-                            background: Color::parse(
-                                &(background.unwrap_or("#1e1e2e".to_string())),
-                            )
-                            .expect("improperly formatted background color"),
-                            primary: Color::parse(&(primary.unwrap_or("#89b4fa".to_string())))
-                                .expect("improperly formatted active color"),
-                            text: Color::parse(&(text.unwrap_or("#cdd6f4".to_string())))
-                                .expect("improperly fomatted inactive color"),
-                            ..Palette::CATPPUCCIN_MOCHA
-                        },
-                    );
-                    Theme::Custom(theme.into())
-                } else {
-                    Theme::CatppuccinMocha
-                }
-            } else {
-                Theme::CatppuccinMocha
-            }
+        if let Some(app) = config::Config::new()
+            .and_then(|config| config.colors)
+            .and_then(|colors| colors.app)
+        {
+            let background = app.background;
+            let primary = app.active;
+            let text = app.inactive;
+            let theme = theme::Custom::new(
+                "Config".to_string(),
+                Palette {
+                    background: Color::parse(&(background.unwrap_or("#1e1e2e".to_string())))
+                        .expect("improperly formatted background color"),
+                    primary: Color::parse(&(primary.unwrap_or("#89b4fa".to_string())))
+                        .expect("improperly formatted active color"),
+                    text: Color::parse(&(text.unwrap_or("#cdd6f4".to_string())))
+                        .expect("improperly fomatted inactive color"),
+                    ..Palette::CATPPUCCIN_MOCHA
+                },
+            );
+            Theme::Custom(theme.into())
         } else {
             Theme::CatppuccinMocha
         }
