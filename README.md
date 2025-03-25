@@ -6,7 +6,7 @@
   <img src="https://img.shields.io/github/forks/bancedev/frostty" alt="forks">
 </p>
 
-<h1 align="center">Frostty - A GPU accelerated terminal emulator for people who get things done</h1>
+<h1 align="center">Frostty - A terminal emulator with the feel of a dynamic wm</h1>
 
 <p align="center">
   <img alt="Frostty - A GPU accelerated terminal emulator for people who get things done"
@@ -15,7 +15,7 @@
 
 ## About
 
-Frostty is a modern terminal emulator for the terminal power user. It comes with simple defaults that can be expanded upon via extensive configuration, it is very lightweight and performant. Being built using Rust with the Iced GUI framework and the alacritty_terminal library for handling core emulation.
+Frostty is a modern terminal emulator for the terminal power user. It is focused on prividing a highly customizable, smooth experience that comes with simple defaults but many opt-in features. Being built using Rust with the Iced GUI framework.
 
 ## Features
 
