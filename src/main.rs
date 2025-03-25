@@ -1,14 +1,16 @@
-use iced::Task;
 use iced::font::{Family, Stretch, Weight};
+use iced::theme::Palette;
 use iced::widget::pane_grid::{self, PaneGrid};
 use iced::widget::{container, responsive};
 use iced::window::settings::PlatformSpecific;
+use iced::{Color, Task, theme};
 use iced::{Element, Fill, Font, Length, Size, Subscription};
 use iced::{Theme, keyboard};
 use std::collections::HashMap;
 use std::env;
 use terminal::TerminalView;
 
+mod config;
 mod style;
 mod terminal;
 
@@ -249,7 +251,36 @@ impl Frostty {
     }
 
     fn theme(&self) -> Theme {
-        Theme::CatppuccinMocha
+        if let Some(config) = config::Config::new() {
+            if let Some(colors) = config.colors {
+                if let Some(app) = colors.app {
+                    let background = app.background;
+                    let primary = app.active;
+                    let text = app.inactive;
+                    let theme = theme::Custom::new(
+                        "Config".to_string(),
+                        Palette {
+                            background: Color::parse(
+                                &(background.unwrap_or("#1e1e2e".to_string())),
+                            )
+                            .expect("improperly formatted background color"),
+                            primary: Color::parse(&(primary.unwrap_or("#89b4fa".to_string())))
+                                .expect("improperly formatted active color"),
+                            text: Color::parse(&(text.unwrap_or("#cdd6f4".to_string())))
+                                .expect("improperly fomatted inactive color"),
+                            ..Palette::CATPPUCCIN_MOCHA
+                        },
+                    );
+                    Theme::Custom(theme.into())
+                } else {
+                    Theme::CatppuccinMocha
+                }
+            } else {
+                Theme::CatppuccinMocha
+            }
+        } else {
+            Theme::CatppuccinMocha
+        }
     }
 }
 
