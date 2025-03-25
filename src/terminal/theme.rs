@@ -1,3 +1,4 @@
+use crate::config::Config;
 use crate::terminal::settings::ThemeSettings;
 use alacritty_terminal::vte::ansi::{self, NamedColor};
 use iced::{Color, widget::container};
@@ -41,35 +42,172 @@ pub struct ColorPalette {
 
 impl Default for ColorPalette {
     fn default() -> Self {
+        let mut foreground = String::from("#cdd6f4");
+        let mut background = String::from("#1e1e2e");
+        let mut black = String::from("#45475a");
+        let mut red = String::from("#f38ba8");
+        let mut green = String::from("#a6e3a1");
+        let mut yellow = String::from("#f9e2af");
+        let mut blue = String::from("#89b4fa");
+        let mut magenta = String::from("#f5c2e7");
+        let mut cyan = String::from("#94e2d5");
+        let mut white = String::from("#bac2de");
+        let mut bright_black = String::from("#585b70");
+        let mut bright_red = String::from("#f38ba8");
+        let mut bright_green = String::from("#a6e3a1");
+        let mut bright_yellow = String::from("#f9e2af");
+        let mut bright_blue = String::from("#89b4fa");
+        let mut bright_magenta = String::from("#f5c2e7");
+        let mut bright_cyan = String::from("#94e2d5");
+        let mut bright_white = String::from("#a6adc8");
+        let mut bright_foreground = None;
+        let mut dim_foreground = String::from("#cdd6f4");
+        let mut dim_black = String::from("#45475a");
+        let mut dim_red = String::from("#f38ba8");
+        let mut dim_green = String::from("#a6e3a1");
+        let mut dim_yellow = String::from("#f9e2af");
+        let mut dim_blue = String::from("#89b4fa");
+        let mut dim_magenta = String::from("#f5c2e7");
+        let mut dim_cyan = String::from("#94e2d5");
+        let mut dim_white = String::from("#bac2de");
+
+        if let Some(primary) = Config::new()
+            .and_then(|config| config.colors)
+            .and_then(|colors| colors.primary)
+        {
+            if let Some(fg) = primary.foreground {
+                foreground = fg;
+            }
+            if let Some(bg) = primary.background {
+                background = bg;
+            }
+            if let Some(dfg) = primary.dim_foreground {
+                dim_foreground = dfg;
+            }
+            if let Some(bfg) = primary.bright_foreground {
+                bright_foreground = Some(bfg);
+            }
+        }
+
+        if let Some(normal) = Config::new()
+            .and_then(|config| config.colors)
+            .and_then(|colors| colors.normal)
+        {
+            if let Some(b) = normal.black {
+                black = b;
+            }
+            if let Some(r) = normal.red {
+                red = r;
+            }
+            if let Some(g) = normal.green {
+                green = g;
+            }
+            if let Some(y) = normal.yellow {
+                yellow = y;
+            }
+            if let Some(u) = normal.blue {
+                blue = u;
+            }
+            if let Some(m) = normal.magenta {
+                magenta = m;
+            }
+            if let Some(c) = normal.cyan {
+                cyan = c;
+            }
+            if let Some(w) = normal.white {
+                white = w;
+            }
+        }
+
+        if let Some(bright) = Config::new()
+            .and_then(|config| config.colors)
+            .and_then(|colors| colors.bright)
+        {
+            if let Some(b) = bright.black {
+                bright_black = b;
+            }
+            if let Some(r) = bright.red {
+                bright_red = r;
+            }
+            if let Some(g) = bright.green {
+                bright_green = g;
+            }
+            if let Some(y) = bright.yellow {
+                bright_yellow = y;
+            }
+            if let Some(u) = bright.blue {
+                bright_blue = u;
+            }
+            if let Some(m) = bright.magenta {
+                bright_magenta = m;
+            }
+            if let Some(c) = bright.cyan {
+                bright_cyan = c;
+            }
+            if let Some(w) = bright.white {
+                bright_white = w;
+            }
+        }
+
+        if let Some(dim) = Config::new()
+            .and_then(|config| config.colors)
+            .and_then(|colors| colors.dim)
+        {
+            if let Some(b) = dim.black {
+                dim_black = b;
+            }
+            if let Some(r) = dim.red {
+                dim_red = r;
+            }
+            if let Some(g) = dim.green {
+                dim_green = g;
+            }
+            if let Some(y) = dim.yellow {
+                dim_yellow = y;
+            }
+            if let Some(u) = dim.blue {
+                dim_blue = u;
+            }
+            if let Some(m) = dim.magenta {
+                dim_magenta = m;
+            }
+            if let Some(c) = dim.cyan {
+                dim_cyan = c;
+            }
+            if let Some(w) = dim.white {
+                dim_white = w;
+            }
+        }
+
         Self {
-            foreground: String::from("#cdd6f4"),
-            background: String::from("#1e1e2e"),
-            black: String::from("#45475a"),
-            red: String::from("#f38ba8"),
-            green: String::from("#a6e3a1"),
-            yellow: String::from("#f9e2af"),
-            blue: String::from("#89b4fa"),
-            magenta: String::from("#f5c2e7"),
-            cyan: String::from("#94e2d5"),
-            white: String::from("#bac2de"),
-            bright_black: String::from("#585b70"),
-            bright_red: String::from("#f38ba8"),
-            bright_green: String::from("#a6e3a1"),
-            bright_yellow: String::from("#f9e2af"),
-            bright_blue: String::from("#89b4fa"),
-            bright_magenta: String::from("#f5c2e7"),
-            bright_cyan: String::from("#94e2d5"),
-            bright_white: String::from("#a6adc8"),
-            bright_foreground: None,
-            dim_foreground: String::from("#cdd6f4"),
-            dim_black: String::from("#45475a"),
-            dim_red: String::from("#f38ba8"),
-            dim_green: String::from("#a6e3a1"),
-            dim_yellow: String::from("#f9e2af"),
-            dim_blue: String::from("#89b4fa"),
-            dim_magenta: String::from("#f5c2e7"),
-            dim_cyan: String::from("#94e2d5"),
-            dim_white: String::from("#bac2de"),
+            foreground,
+            background,
+            black,
+            red,
+            green,
+            yellow,
+            blue,
+            magenta,
+            cyan,
+            white,
+            bright_black,
+            bright_red,
+            bright_green,
+            bright_yellow,
+            bright_blue,
+            bright_magenta,
+            bright_cyan,
+            bright_white,
+            bright_foreground,
+            dim_foreground,
+            dim_black,
+            dim_red,
+            dim_green,
+            dim_yellow,
+            dim_blue,
+            dim_magenta,
+            dim_cyan,
+            dim_white,
         }
     }
 }

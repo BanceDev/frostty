@@ -5,6 +5,13 @@ use serde::Deserialize;
 #[derive(Deserialize)]
 pub struct Config {
     pub colors: Option<Colors>,
+    pub keybinds: Option<Keybinds>,
+}
+
+#[derive(Deserialize)]
+pub struct Keybinds {
+    pub new: Option<String>,
+    pub close: Option<String>,
 }
 
 #[derive(Deserialize)]
@@ -13,6 +20,7 @@ pub struct Colors {
     pub primary: Option<Primary>,
     pub normal: Option<TerminalColors>,
     pub bright: Option<TerminalColors>,
+    pub dim: Option<TerminalColors>,
 }
 
 #[derive(Deserialize)]
