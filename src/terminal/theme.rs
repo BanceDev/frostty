@@ -42,34 +42,34 @@ pub struct ColorPalette {
 
 impl Default for ColorPalette {
     fn default() -> Self {
-        let mut foreground = String::from("#cdd6f4");
-        let mut background = String::from("#1e1e2e");
-        let mut black = String::from("#45475a");
-        let mut red = String::from("#f38ba8");
-        let mut green = String::from("#a6e3a1");
-        let mut yellow = String::from("#f9e2af");
-        let mut blue = String::from("#89b4fa");
-        let mut magenta = String::from("#f5c2e7");
-        let mut cyan = String::from("#94e2d5");
-        let mut white = String::from("#bac2de");
-        let mut bright_black = String::from("#585b70");
-        let mut bright_red = String::from("#f38ba8");
-        let mut bright_green = String::from("#a6e3a1");
-        let mut bright_yellow = String::from("#f9e2af");
-        let mut bright_blue = String::from("#89b4fa");
-        let mut bright_magenta = String::from("#f5c2e7");
-        let mut bright_cyan = String::from("#94e2d5");
-        let mut bright_white = String::from("#a6adc8");
+        let mut foreground = String::from("#d8d8d8");
+        let mut background = String::from("#181818");
+        let mut black = String::from("#181818");
+        let mut red = String::from("#ac4242");
+        let mut green = String::from("#90a959");
+        let mut yellow = String::from("#f4bf75");
+        let mut blue = String::from("#6a9fb5");
+        let mut magenta = String::from("#aa759f");
+        let mut cyan = String::from("#75b5aa");
+        let mut white = String::from("#d8d8d8");
+        let mut bright_black = String::from("#6b6b6b");
+        let mut bright_red = String::from("#c55555");
+        let mut bright_green = String::from("#aac474");
+        let mut bright_yellow = String::from("#feca88");
+        let mut bright_blue = String::from("#82b8c8");
+        let mut bright_magenta = String::from("#c28cb8");
+        let mut bright_cyan = String::from("#93d3c3");
+        let mut bright_white = String::from("#f8f8f8");
         let mut bright_foreground = None;
-        let mut dim_foreground = String::from("#cdd6f4");
-        let mut dim_black = String::from("#45475a");
-        let mut dim_red = String::from("#f38ba8");
-        let mut dim_green = String::from("#a6e3a1");
-        let mut dim_yellow = String::from("#f9e2af");
-        let mut dim_blue = String::from("#89b4fa");
-        let mut dim_magenta = String::from("#f5c2e7");
-        let mut dim_cyan = String::from("#94e2d5");
-        let mut dim_white = String::from("#bac2de");
+        let mut dim_foreground = String::from("#828482");
+        let mut dim_black = String::from("#0f0f0f");
+        let mut dim_red = String::from("#712b2b");
+        let mut dim_green = String::from("#5f6f3a");
+        let mut dim_yellow = String::from("#a17e4d");
+        let mut dim_blue = String::from("#456877");
+        let mut dim_magenta = String::from("#704d68");
+        let mut dim_cyan = String::from("#4d7770");
+        let mut dim_white = String::from("#8e8e8e");
 
         if let Some(primary) = Config::new()
             .and_then(|config| config.colors)

@@ -279,18 +279,29 @@ impl Frostty {
             let theme = theme::Custom::new(
                 "Config".to_string(),
                 Palette {
-                    background: Color::parse(&(background.unwrap_or("#1e1e2e".to_string())))
+                    background: Color::parse(&(background.unwrap_or("#181818".to_string())))
                         .expect("improperly formatted background color"),
-                    primary: Color::parse(&(primary.unwrap_or("#89b4fa".to_string())))
+                    primary: Color::parse(&(primary.unwrap_or("#ac4242".to_string())))
                         .expect("improperly formatted active color"),
-                    text: Color::parse(&(text.unwrap_or("#cdd6f4".to_string())))
+                    text: Color::parse(&(text.unwrap_or("#d8d8d8".to_string())))
                         .expect("improperly fomatted inactive color"),
-                    ..Palette::CATPPUCCIN_MOCHA
+                    danger: Color::parse("#ac4242").expect(""),
+                    success: Color::parse("#90a959").expect(""),
                 },
             );
             Theme::Custom(theme.into())
         } else {
-            Theme::CatppuccinMocha
+            let theme = theme::Custom::new(
+                "Default".to_string(),
+                Palette {
+                    background: Color::parse("#181818").expect(""),
+                    primary: Color::parse("#ac4242").expect(""),
+                    text: Color::parse("#d8d8d8").expect("improperly fomatted inactive color"),
+                    danger: Color::parse("#ac4242").expect("shouldn't fail"),
+                    success: Color::parse("#90a959").expect("shouldn't fail"),
+                },
+            );
+            Theme::Custom(theme.into())
         }
     }
 }
