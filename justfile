@@ -20,9 +20,6 @@ appdata-dst := clean(rootdir / prefix) / 'share' / 'appdata' / appdata
 icons-src := 'extra' / 'icons' / 'hicolor'
 icons-dst := clean(rootdir / prefix) / 'share' / 'icons' / 'hicolor'
 
-fonts-src := 'assets' / 'fonts' / 'JetBrainsMono'
-fonts-dst := clean(rootdir / prefix) / 'share' / 'fonts'
-
 info := 'extra' / 'frostty.info'
 
 default: build-release
@@ -45,9 +42,7 @@ install:
     for size in `ls {{icons-src}}`; do \
         install -Dm0644 "{{icons-src}}/$size/apps/frostty.png" "{{icons-dst}}/$size/apps/frostty.png"; \
     done
-    sudo cp -r {{fonts-src}} {{fonts-dst}}
     tic -x {{info}}
-    fc-cache -fv
 
 update:
     install -Dm0755 {{bin-src}} {{bin-dst}}

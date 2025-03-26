@@ -1,4 +1,3 @@
-use iced::font::{Family, Stretch, Weight};
 use iced::theme::Palette;
 use iced::widget::pane_grid::{self, PaneGrid};
 use iced::widget::{container, image, responsive, stack};
@@ -13,9 +12,6 @@ use terminal::TerminalView;
 mod config;
 mod style;
 mod terminal;
-
-const TERM_FONT_JET_BRAINS_BYTES: &[u8] =
-    include_bytes!("../assets/fonts/JetBrainsMono/JetBrainsMonoNerdFontMono-Bold.ttf");
 
 pub fn main() -> iced::Result {
     unsafe {
@@ -33,7 +29,7 @@ pub fn main() -> iced::Result {
             ..Default::default()
         })
         .window_size((790.0, 460.0))
-        .run_with(Frostty::new)
+        .run()
 }
 
 struct Frostty {
@@ -55,21 +51,15 @@ enum Message {
     Close(pane_grid::Pane),
     CloseFocused,
     Terminal(terminal::Event),
-    FontLoaded(Result<(), iced::font::Error>),
 }
 
 impl Frostty {
-    fn new() -> (Self, Task<Message>) {
+    fn new() -> Self {
         let (panes, pane) = pane_grid::State::new(Pane::new(0));
         let term_settings = terminal::settings::Settings {
             font: terminal::settings::FontSettings {
                 size: 14.0,
-                font_type: Font {
-                    weight: Weight::Normal,
-                    family: Family::Name("JetBrainsMono Nerd Font Mono"),
-                    stretch: Stretch::Normal,
-                    ..Default::default()
-                },
+                font_type: Font::MONOSPACE,
                 ..Default::default()
             },
             theme: terminal::settings::ThemeSettings::default(),
@@ -85,24 +75,18 @@ impl Frostty {
         let mut terminals = HashMap::new();
         terminals.insert(0, term);
 
-        (
-            Frostty {
-                panes,
-                panes_created: 1,
-                focus: Some(pane),
-                terminals,
-                term_settings,
-                config: config::Config::new(),
-            },
-            Task::batch(vec![
-                iced::font::load(TERM_FONT_JET_BRAINS_BYTES).map(Message::FontLoaded),
-            ]),
-        )
+        Frostty {
+            panes,
+            panes_created: 1,
+            focus: Some(pane),
+            terminals,
+            term_settings,
+            config: config::Config::new(),
+        }
     }
 
     fn update(&mut self, message: Message) -> Task<Message> {
         match message {
-            Message::FontLoaded(_) => {}
             Message::SplitFocused => {
                 if let Some(pane) = self.focus {
                     let size = self
@@ -289,6 +273,12 @@ impl Frostty {
         } else {
             Theme::CatppuccinMocha
         }
+    }
+}
+
+impl Default for Frostty {
+    fn default() -> Self {
+        Frostty::new()
     }
 }
 
