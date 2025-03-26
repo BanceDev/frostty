@@ -7,8 +7,15 @@ This is a list of the unqie features of Frostty outside of its terminal emulatio
 ### Dynamic Tiling
 
 You can open multiple tiled terminals by using the CTRL + SHIFT + N and close them
-by using CTRL + SHIFT + Q. Tiled windows and also be resized and will soon be able
-to be drag and dropped to move them around.
+by using CTRL + SHIFT + Q. Tiled windows and also be resized by clicking and dragging
+on the pane splits.
+
+### Custom Wallpaper
+
+By placing an image in the config folder and setting the wallpaper you can set
+an image to be the wallpaper for your terminal. This is best paired with a lower
+opacity terminal background color. See [configuration](./configuration.md) for more
+information.
 
 ### Opening URLs with the mouse
 
