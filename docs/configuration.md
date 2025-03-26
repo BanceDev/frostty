@@ -45,3 +45,10 @@ magenta = "#000000"
 cyan = "#000000"
 white = "#000000"
 ```
+## Wallpaper
+
+To set the wallpaper in frostty first place an image into the .config/frostty directory and then set the following variable anywhere in your frostty.toml
+
+```toml
+wallpaper = "wallpaper.png"
+```
