@@ -5,9 +5,14 @@ use serde::Deserialize;
 #[derive(Deserialize, Clone)]
 pub struct Config {
     pub colors: Option<Colors>,
-    pub wallpaper: Option<String>,
+    pub general: Option<General>,
     pub keybinds: Option<Keybinds>,
     pub font: Option<Font>,
+}
+
+#[derive(Deserialize, Clone)]
+pub struct General {
+    pub wallpaper: Option<String>,
 }
 
 #[derive(Deserialize, Clone)]

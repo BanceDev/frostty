@@ -247,7 +247,12 @@ impl Frostty {
         .on_drag(Message::Dragged)
         .on_resize(10, Message::Resized);
 
-        if let Some(wallpaper) = self.config.clone().and_then(|config| config.wallpaper) {
+        if let Some(wallpaper) = self
+            .config
+            .clone()
+            .and_then(|config| config.general)
+            .and_then(|general| general.wallpaper)
+        {
             stack![
                 image(format!("{}/.config/frostty/{}", env!("HOME"), wallpaper))
                     .content_fit(iced::ContentFit::Cover),

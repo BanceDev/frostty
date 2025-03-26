@@ -45,10 +45,26 @@ magenta = "#000000"
 cyan = "#000000"
 white = "#000000"
 ```
-## Wallpaper
 
-To set the wallpaper in frostty first place an image into the .config/frostty directory and then set the following variable anywhere in your frostty.toml
+## Font
+
+Table for configuring the terminal fonts. You can configure a font as follows.
 
 ```toml
+[font]
+family = "JetBrainsMono Nerd Font Mono"
+size = 14.0 # floating point number
+```
+
+## General
+
+Table for general settings that don't fit into another subcategory
+
+### Wallpaper
+
+To set the wallpaper in frostty first place an image into the .config/frostty directory and then set the wallpaper variable under the general table.
+
+```toml
+[general]
 wallpaper = "wallpaper.png"
 ```
