@@ -7,6 +7,13 @@ pub struct Config {
     pub colors: Option<Colors>,
     pub wallpaper: Option<String>,
     pub keybinds: Option<Keybinds>,
+    pub font: Option<Font>,
+}
+
+#[derive(Deserialize, Clone)]
+pub struct Font {
+    pub family: Option<String>,
+    pub size: Option<f32>,
 }
 
 #[derive(Deserialize, Clone)]

@@ -1,3 +1,4 @@
+use iced::font::Family;
 use iced::theme::Palette;
 use iced::widget::pane_grid::{self, PaneGrid};
 use iced::widget::{container, image, responsive, stack};
@@ -55,11 +56,24 @@ enum Message {
 
 impl Frostty {
     fn new() -> Self {
+        let config = config::Config::new();
         let (panes, pane) = pane_grid::State::new(Pane::new(0));
+        let mut size = 14.0;
+        let mut font_type = Font::MONOSPACE;
+        if let Some(font) = config.clone().and_then(|config| config.font) {
+            size = font.size.unwrap_or(14.0);
+            font_type = match font.family {
+                Some(family) => Font {
+                    family: Family::Name(Box::leak(family.clone().into_boxed_str())),
+                    ..Font::MONOSPACE
+                },
+                None => Font::MONOSPACE,
+            };
+        }
         let term_settings = terminal::settings::Settings {
             font: terminal::settings::FontSettings {
-                size: 14.0,
-                font_type: Font::MONOSPACE,
+                size,
+                font_type,
                 ..Default::default()
             },
             theme: terminal::settings::ThemeSettings::default(),
@@ -81,7 +95,7 @@ impl Frostty {
             focus: Some(pane),
             terminals,
             term_settings,
-            config: config::Config::new(),
+            config,
         }
     }
 
