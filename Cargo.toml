@@ -15,4 +15,4 @@ serde = "1.0.219"
 
 [dependencies.iced]
 version = "0.13.1"
-features = ["wgpu", "tokio", "advanced", "lazy", "smol", "canvas"]
+features = ["image", "wgpu", "tokio", "advanced", "lazy", "smol", "canvas"]

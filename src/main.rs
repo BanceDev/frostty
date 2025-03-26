@@ -1,7 +1,7 @@
 use iced::font::{Family, Stretch, Weight};
 use iced::theme::Palette;
 use iced::widget::pane_grid::{self, PaneGrid};
-use iced::widget::{container, responsive};
+use iced::widget::{container, image, responsive, stack};
 use iced::window::settings::PlatformSpecific;
 use iced::{Color, Task, theme};
 use iced::{Element, Fill, Font, Length, Size, Subscription};
@@ -42,6 +42,7 @@ struct Frostty {
     term_settings: terminal::settings::Settings,
     panes_created: usize,
     focus: Option<pane_grid::Pane>,
+    config: Option<config::Config>,
 }
 
 #[derive(Debug, Clone)]
@@ -91,6 +92,7 @@ impl Frostty {
                 focus: Some(pane),
                 terminals,
                 term_settings,
+                config: config::Config::new(),
             },
             Task::batch(vec![
                 iced::font::load(TERM_FONT_JET_BRAINS_BYTES).map(Message::FontLoaded),
@@ -247,11 +249,24 @@ impl Frostty {
         .on_drag(Message::Dragged)
         .on_resize(10, Message::Resized);
 
-        container(pane_grid).padding(10).into()
+        if let Some(wallpaper) = self.config.clone().and_then(|config| config.wallpaper) {
+            stack![
+                image(format!("{}/.config/frostty/{}", env!("HOME"), wallpaper))
+                    .content_fit(iced::ContentFit::Cover),
+                container(pane_grid).padding(10)
+            ]
+            .width(Fill)
+            .height(Fill)
+            .into()
+        } else {
+            container(pane_grid).padding(10).into()
+        }
     }
 
     fn theme(&self) -> Theme {
-        if let Some(app) = config::Config::new()
+        if let Some(app) = self
+            .config
+            .clone()
             .and_then(|config| config.colors)
             .and_then(|colors| colors.app)
         {

@@ -345,15 +345,19 @@ fn build_ansi256_colors() -> HashMap<u8, Color> {
 }
 
 fn hex_to_color(hex: &str) -> anyhow::Result<Color> {
-    if hex.len() != 7 {
+    if hex.len() != 7 && hex.len() != 9 {
         return Err(anyhow::format_err!("input string is in non valid format"));
     }
 
     let r = u8::from_str_radix(&hex[1..3], 16)?;
     let g = u8::from_str_radix(&hex[3..5], 16)?;
     let b = u8::from_str_radix(&hex[5..7], 16)?;
-
-    Ok(Color::from_rgb8(r, g, b))
+    if hex.len() == 9 {
+        let a = u8::from_str_radix(&hex[7..9], 16)? as f32 / 255.0;
+        Ok(Color::from_rgba8(r, g, b, a))
+    } else {
+        Ok(Color::from_rgb8(r, g, b))
+    }
 }
 
 impl TerminalStyle for Theme {

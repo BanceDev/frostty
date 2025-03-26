@@ -2,19 +2,20 @@ use std::fs;
 
 use serde::Deserialize;
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Clone)]
 pub struct Config {
     pub colors: Option<Colors>,
+    pub wallpaper: Option<String>,
     pub keybinds: Option<Keybinds>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Clone)]
 pub struct Keybinds {
     pub new: Option<String>,
     pub close: Option<String>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Clone)]
 pub struct Colors {
     pub app: Option<App>,
     pub primary: Option<Primary>,
@@ -23,14 +24,14 @@ pub struct Colors {
     pub dim: Option<TerminalColors>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Clone)]
 pub struct App {
     pub background: Option<String>,
     pub active: Option<String>,
     pub inactive: Option<String>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Clone)]
 pub struct Primary {
     pub foreground: Option<String>,
     pub background: Option<String>,
@@ -38,7 +39,7 @@ pub struct Primary {
     pub bright_foreground: Option<String>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Clone)]
 pub struct TerminalColors {
     pub black: Option<String>,
     pub red: Option<String>,
