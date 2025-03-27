@@ -206,7 +206,7 @@ impl Frostty {
     fn subscription(&self) -> Subscription<Message> {
         let mut subs = vec![];
         let key_sub = keyboard::on_key_press(|key_code, modifiers| {
-            if modifiers.control() && modifiers.shift() {
+            if modifiers.alt() {
                 return handle_hotkey(key_code);
             }
             None
