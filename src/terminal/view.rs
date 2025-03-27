@@ -281,17 +281,19 @@ impl<'a> TerminalView<'a> {
                     ..
                 } => match key {
                     Key::Character(_) => {
-                        if let Some(c) = text {
-                            binding_action = self.term.bindings.get_action(
-                                InputKind::Char(c.to_ascii_lowercase()),
-                                state.keyboard_modifiers,
-                                last_content.terminal_mode,
-                            );
+                        if !modifiers.alt() {
+                            if let Some(c) = text {
+                                binding_action = self.term.bindings.get_action(
+                                    InputKind::Char(c.to_ascii_lowercase()),
+                                    state.keyboard_modifiers,
+                                    last_content.terminal_mode,
+                                );
 
-                            if binding_action == BindingAction::Ignore {
-                                return Some(Command::ProcessBackendCommand(
-                                    BackendCommand::Write(c.as_bytes().to_vec()),
-                                ));
+                                if binding_action == BindingAction::Ignore {
+                                    return Some(Command::ProcessBackendCommand(
+                                        BackendCommand::Write(c.as_bytes().to_vec()),
+                                    ));
+                                }
                             }
                         }
                     }
@@ -457,18 +459,17 @@ impl Widget<Event, Theme, iced::Renderer> for TerminalView<'_> {
                             CursorShape::Hidden => Size::new(0.0, 0.0),
                         };
                         let cursor_shape = match content.cursor_style.shape {
-                            CursorShape::Underline => Path::rectangle(Point::new(x, y + cell_height - 1.0), cursor_size),
-                            CursorShape::HollowBlock => {
-                                Path::new(|b| {
-                                    b.move_to(Point::new(x, y));
-                                    b.line_to(Point::new(cell_width, y));
-                                    b.line_to(Point::new(cell_width, cell_height));
-                                    b.line_to(Point::new(x, cell_height));
-                                    b.line_to(Point::new(x, y));
-                                })
+                            CursorShape::Underline => {
+                                Path::rectangle(Point::new(x, y + cell_height - 1.0), cursor_size)
                             }
+                            CursorShape::HollowBlock => Path::new(|b| {
+                                b.move_to(Point::new(x, y));
+                                b.line_to(Point::new(cell_width, y));
+                                b.line_to(Point::new(cell_width, cell_height));
+                                b.line_to(Point::new(x, cell_height));
+                                b.line_to(Point::new(x, y));
+                            }),
                             _ => Path::rectangle(Point::new(x, y), cursor_size),
-
                         };
                         frame.fill(&cursor_shape, cursor_color);
                     }
@@ -476,7 +477,7 @@ impl Widget<Event, Theme, iced::Renderer> for TerminalView<'_> {
                     // Draw text
                     if indexed.c != ' ' && indexed.c != '\t' {
                         if content.grid.cursor.point == indexed.point
-                            && content.terminal_mode.contains(TermMode::APP_CURSOR) 
+                            && content.terminal_mode.contains(TermMode::APP_CURSOR)
                             && content.cursor_style.shape == CursorShape::Block
                         {
                             fg = bg;
