@@ -446,7 +446,9 @@ impl Backend {
 
     fn scroll(&mut self, terminal: &mut Term<EventProxy>, delta_value: i32) {
         if delta_value != 0 {
-            let scroll = Scroll::Delta(delta_value);
+            // TODO: setting for this
+            let scroll_sens = 3;
+            let scroll = Scroll::Delta(-delta_value * scroll_sens);
             if terminal
                 .mode()
                 .contains(TermMode::ALTERNATE_SCROLL | TermMode::ALT_SCREEN)

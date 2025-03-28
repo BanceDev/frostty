@@ -9,7 +9,6 @@ use alacritty_terminal::selection::SelectionType;
 use alacritty_terminal::term::{TermMode, cell};
 use alacritty_terminal::vte::ansi::CursorShape;
 use iced::alignment::{Horizontal, Vertical};
-use iced::clipboard::write;
 use iced::mouse::{Cursor, ScrollDelta};
 use iced::widget::canvas::{Path, Text};
 use iced::widget::container;
@@ -281,19 +280,17 @@ impl<'a> TerminalView<'a> {
                     ..
                 } => match key {
                     Key::Character(_) => {
-                        if !modifiers.alt() {
-                            if let Some(c) = text {
-                                binding_action = self.term.bindings.get_action(
-                                    InputKind::Char(c.to_ascii_lowercase()),
-                                    state.keyboard_modifiers,
-                                    last_content.terminal_mode,
-                                );
+                        if let Some(c) = text {
+                            binding_action = self.term.bindings.get_action(
+                                InputKind::Char(c.to_ascii_lowercase()),
+                                modifiers,
+                                last_content.terminal_mode,
+                            );
 
-                                if binding_action == BindingAction::Ignore {
-                                    return Some(Command::ProcessBackendCommand(
-                                        BackendCommand::Write(c.as_bytes().to_vec()),
-                                    ));
-                                }
+                            if binding_action == BindingAction::Ignore && !modifiers.alt() {
+                                return Some(Command::ProcessBackendCommand(
+                                    BackendCommand::Write(c.as_bytes().to_vec()),
+                                ));
                             }
                         }
                     }

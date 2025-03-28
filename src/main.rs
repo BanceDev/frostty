@@ -4,7 +4,7 @@ use iced::widget::pane_grid::{self, PaneGrid};
 use iced::widget::{container, image, responsive, stack};
 use iced::window::settings::PlatformSpecific;
 use iced::{Color, Task, theme};
-use iced::{Element, Fill, Font, Length, Size, Subscription};
+use iced::{Element, Fill, Font, Length, Size, Subscription, window};
 use iced::{Theme, keyboard};
 use std::collections::HashMap;
 use std::env;
@@ -170,6 +170,8 @@ impl Frostty {
                         .unwrap();
                     self.focus = Some(sibling);
                     return TerminalView::focus(new_focued_terminal.widget_id());
+                } else {
+                    return window::get_latest().and_then(window::close);
                 }
             }
             Message::CloseFocused => {
@@ -184,6 +186,8 @@ impl Frostty {
                                     .unwrap();
                                 self.focus = Some(sibling);
                                 return TerminalView::focus(new_focued_terminal.widget_id());
+                            } else {
+                                return window::get_latest().and_then(window::close);
                             }
                         }
                     }
@@ -318,8 +322,8 @@ fn handle_hotkey(key: keyboard::Key) -> Option<Message> {
 
     match key.as_ref() {
         // TODO: config file for this
-        Key::Character("n") => Some(Message::SplitFocused),
         Key::Character("q") => Some(Message::CloseFocused),
+        Key::Character("n") => Some(Message::SplitFocused),
         Key::Named(key) => {
             let direction = match key {
                 key::Named::ArrowUp => Some(Direction::Up),
