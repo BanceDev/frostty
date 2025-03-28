@@ -1,5 +1,6 @@
 use iced::font::Family;
 use iced::theme::Palette;
+use iced::time::{self, Instant};
 use iced::widget::pane_grid::{self, PaneGrid};
 use iced::widget::{container, image, responsive, stack};
 use iced::window::settings::PlatformSpecific;
@@ -38,6 +39,7 @@ struct Frostty {
     terminals: HashMap<u64, terminal::Terminal>,
     term_settings: terminal::settings::Settings,
     panes_created: usize,
+    bell: Option<pane_grid::Pane>,
     focus: Option<pane_grid::Pane>,
     config: Option<config::Config>,
 }
@@ -51,6 +53,8 @@ enum Message {
     Resized(pane_grid::ResizeEvent),
     Close(pane_grid::Pane),
     CloseFocused,
+    BellOn(pane_grid::Pane),
+    BellOff(Instant),
     Terminal(terminal::Event),
 }
 
@@ -92,6 +96,7 @@ impl Frostty {
         Frostty {
             panes,
             panes_created: 1,
+            bell: None,
             focus: Some(pane),
             terminals,
             term_settings,
@@ -193,12 +198,34 @@ impl Frostty {
                     }
                 }
             }
+            Message::BellOn(pane) => {
+                let bell_pane = self.panes.get_mut(pane).unwrap();
+                if !bell_pane.bell {
+                    bell_pane.bell = true;
+                    self.bell = Some(pane);
+                }
+            }
+            Message::BellOff(_now) => {
+                if let Some(pane) = self.bell {
+                    let bell_pane = self.panes.get_mut(pane).unwrap();
+                    bell_pane.bell = false;
+                    self.bell = None;
+                }
+            }
             Message::Terminal(terminal::Event::CommandReceived(id, cmd)) => {
                 if let Some(terminal) = self.terminals.get_mut(&id) {
-                    if terminal.update(cmd) == terminal::actions::Action::Shutdown {
-                        if let Some(cur_pane) = self.focus {
-                            return self.update(Message::Close(cur_pane));
+                    match terminal.update(cmd) {
+                        terminal::actions::Action::Shutdown => {
+                            if let Some(cur_pane) = self.focus {
+                                return self.update(Message::Close(cur_pane));
+                            }
                         }
+                        terminal::actions::Action::Bell => {
+                            if let Some(cur_pane) = self.focus {
+                                return self.update(Message::BellOn(cur_pane));
+                            }
+                        }
+                        _ => (),
                     }
                 }
             }
@@ -225,6 +252,13 @@ impl Frostty {
                 Subscription::run_with_id(terminal.id, term_event_stream).map(Message::Terminal),
             );
         }
+        if let Some(pane) = self.bell {
+            let bell_pane = self.panes.get(pane).unwrap();
+            subs.push(
+                time::every(std::time::Duration::from_millis(bell_pane.bell_len))
+                    .map(Message::BellOff),
+            );
+        }
 
         Subscription::batch(subs)
     }
@@ -236,12 +270,16 @@ impl Frostty {
             let is_focused = focus == Some(id);
 
             pane_grid::Content::new(responsive(move |_size| {
-                view_content(pane.id as u64, &self.terminals)
+                view_content(pane.id as u64, pane.bell, &self.terminals)
             }))
             .style(if is_focused {
-                style::pane_focused
+                if pane.bell {
+                    style::pane_bell
+                } else {
+                    style::pane_focused
+                }
             } else {
-                style::pane_active
+                style::pane_unfocused
             })
         })
         .width(Fill)
@@ -343,6 +381,8 @@ fn handle_hotkey(key: keyboard::Key) -> Option<Message> {
 struct Pane {
     id: usize,
     pub is_pinned: bool,
+    pub bell: bool,
+    pub bell_len: u64,
 }
 
 impl Pane {
@@ -350,18 +390,29 @@ impl Pane {
         Self {
             id,
             is_pinned: false,
+            bell: false,
+            bell_len: 100,
         }
     }
 }
 
 fn view_content(
     pane_id: u64,
+    bell: bool,
     terminals: &HashMap<u64, terminal::Terminal>,
 ) -> Element<'_, Message> {
     let terminal = terminals.get(&pane_id).expect("terminal with id not found");
-    container(TerminalView::show(terminal).map(Message::Terminal))
-        .width(Length::Fill)
-        .height(Length::Fill)
-        .padding(5)
-        .into()
+    if !bell {
+        container(TerminalView::show(terminal).map(Message::Terminal))
+            .padding(5)
+            .width(Length::Fill)
+            .height(Length::Fill)
+            .into()
+    } else {
+        container(TerminalView::show(terminal).map(Message::Terminal))
+            .padding(5)
+            .width(Length::Fill)
+            .height(Length::Fill)
+            .into()
+    }
 }

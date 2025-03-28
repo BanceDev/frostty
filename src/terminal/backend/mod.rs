@@ -203,6 +203,9 @@ impl Backend {
                     Event::Title(title) => {
                         action = Action::ChangeTitle(title);
                     }
+                    Event::Bell => {
+                        action = Action::Bell;
+                    }
                     _ => {}
                 };
             }
@@ -448,7 +451,7 @@ impl Backend {
         if delta_value != 0 {
             // TODO: setting for this
             let scroll_sens = 3;
-            let scroll = Scroll::Delta(-delta_value * scroll_sens);
+            let scroll = Scroll::Delta(delta_value * scroll_sens);
             if terminal
                 .mode()
                 .contains(TermMode::ALTERNATE_SCROLL | TermMode::ALT_SCREEN)

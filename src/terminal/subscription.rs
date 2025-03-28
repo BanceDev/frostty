@@ -1,4 +1,4 @@
-use crate::terminal::{backend::BackendCommand, Command, Event};
+use crate::terminal::{Command, Event, backend::BackendCommand};
 use alacritty_terminal::event::Event as AlacrittyEvent;
 use iced::futures::{SinkExt, Stream};
 use iced_graphics::futures::subscription;
@@ -18,7 +18,10 @@ impl Subscription {
                 .send(Event::CommandReceived(term_id, cmd))
                 .await
                 .unwrap_or_else(|_| {
-                    panic!("iced_term stream {}: sending BackendEventSenderReceived event is failed", term_id)
+                    panic!(
+                        "iced_term stream {}: sending BackendEventSenderReceived event is failed",
+                        term_id
+                    )
                 });
 
             let mut shutdown = false;
@@ -37,12 +40,15 @@ impl Subscription {
                             .unwrap_or_else(|_| {
                                 panic!("iced_term stream {}: sending BackendEventReceived event is failed", term_id)
                             });
-                    },
+                    }
                     None => {
                         if !shutdown {
-                            panic!("iced_term stream {}: terminal event channel closed unexpected", term_id);
+                            panic!(
+                                "iced_term stream {}: terminal event channel closed unexpected",
+                                term_id
+                            );
                         }
-                    },
+                    }
                 }
             }
         })

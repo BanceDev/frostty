@@ -328,6 +328,7 @@ impl<'a> TerminalView<'a> {
                 BindingAction::Copy => {
                     clipboard.write(ClipboardKind::Standard, backend.selectable_content());
                 }
+                // TODO: Can handle implementing the bell in the same way here
                 _ => {}
             };
         }
