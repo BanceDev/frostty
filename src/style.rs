@@ -31,9 +31,7 @@ pub fn pane_focused(theme: &Theme) -> container::Style {
     }
 }
 
-pub fn pane_bell(theme: &Theme) -> container::Style {
-    let palette = theme.palette();
-
+pub fn pane_bell(_theme: &Theme) -> container::Style {
     let background = match config::Config::new()
         .and_then(|config| config.bell)
         .and_then(|bell| bell.color)
@@ -42,7 +40,7 @@ pub fn pane_bell(theme: &Theme) -> container::Style {
             let bg = Color::parse(&color).expect("improperly formatted bell color");
             Some(Background::from(bg))
         }
-        None => Some(Background::from(palette.text)),
+        None => None,
     };
 
     container::Style {

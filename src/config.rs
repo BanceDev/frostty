@@ -24,7 +24,7 @@ pub struct Font {
 
 #[derive(Deserialize, Clone)]
 #[serde(untagged)]
-enum Command {
+pub enum Command {
     Simple(String),
     Complex { program: String, args: Vec<String> },
 }

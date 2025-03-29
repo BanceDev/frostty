@@ -1,3 +1,4 @@
+use config::Command;
 use iced::font::Family;
 use iced::theme::Palette;
 use iced::time::{self, Instant};
@@ -9,6 +10,7 @@ use iced::{Element, Fill, Font, Length, Size, Subscription, window};
 use iced::{Theme, keyboard};
 use std::collections::HashMap;
 use std::env;
+use std::process;
 use terminal::TerminalView;
 
 mod config;
@@ -207,6 +209,26 @@ impl Frostty {
             Message::BellOn(pane) => {
                 if let Some(duration) = self.bell_len {
                     if duration != 0 {
+                        if let Some(command) = self
+                            .config
+                            .clone()
+                            .and_then(|config| config.bell)
+                            .and_then(|bell| bell.command)
+                        {
+                            match command {
+                                Command::Simple(program) => {
+                                    process::Command::new(program)
+                                        .spawn()
+                                        .expect("failed to exec bell cmd");
+                                }
+                                Command::Complex { program, args } => {
+                                    process::Command::new(program)
+                                        .args(args)
+                                        .spawn()
+                                        .expect("failed to exec bell cmd");
+                                }
+                            }
+                        }
                         let bell_pane = self.panes.get_mut(pane).unwrap();
                         if !bell_pane.bell {
                             bell_pane.bell = true;
