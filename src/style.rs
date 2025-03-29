@@ -1,5 +1,7 @@
 use iced::widget::container;
-use iced::{Background, Border, Theme};
+use iced::{Background, Border, Color, Theme};
+
+use crate::config;
 
 pub fn pane_unfocused(theme: &Theme) -> container::Style {
     let palette = theme.palette();
@@ -32,8 +34,19 @@ pub fn pane_focused(theme: &Theme) -> container::Style {
 pub fn pane_bell(theme: &Theme) -> container::Style {
     let palette = theme.palette();
 
+    let background = match config::Config::new()
+        .and_then(|config| config.bell)
+        .and_then(|bell| bell.color)
+    {
+        Some(color) => {
+            let bg = Color::parse(&color).expect("improperly formatted bell color");
+            Some(Background::from(bg))
+        }
+        None => Some(Background::from(palette.text)),
+    };
+
     container::Style {
-        background: Some(Background::from(palette.text)),
+        background,
         ..Default::default()
     }
 }

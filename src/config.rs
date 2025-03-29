@@ -8,6 +8,7 @@ pub struct Config {
     pub general: Option<General>,
     pub keybinds: Option<Keybinds>,
     pub font: Option<Font>,
+    pub bell: Option<Bell>,
 }
 
 #[derive(Deserialize, Clone)]
@@ -19,6 +20,20 @@ pub struct General {
 pub struct Font {
     pub family: Option<String>,
     pub size: Option<f32>,
+}
+
+#[derive(Deserialize, Clone)]
+#[serde(untagged)]
+enum Command {
+    Simple(String),
+    Complex { program: String, args: Vec<String> },
+}
+
+#[derive(Deserialize, Clone)]
+pub struct Bell {
+    pub duration: Option<u64>,
+    pub color: Option<String>,
+    pub command: Option<Command>,
 }
 
 #[derive(Deserialize, Clone)]

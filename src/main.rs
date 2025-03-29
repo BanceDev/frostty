@@ -40,6 +40,7 @@ struct Frostty {
     term_settings: terminal::settings::Settings,
     panes_created: usize,
     bell: Option<pane_grid::Pane>,
+    bell_len: Option<u64>,
     focus: Option<pane_grid::Pane>,
     config: Option<config::Config>,
 }
@@ -93,10 +94,15 @@ impl Frostty {
         let mut terminals = HashMap::new();
         terminals.insert(0, term);
 
+        let bell_len = config::Config::new()
+            .and_then(|config| config.bell)
+            .and_then(|bell| bell.duration);
+
         Frostty {
             panes,
             panes_created: 1,
             bell: None,
+            bell_len,
             focus: Some(pane),
             terminals,
             term_settings,
@@ -199,10 +205,14 @@ impl Frostty {
                 }
             }
             Message::BellOn(pane) => {
-                let bell_pane = self.panes.get_mut(pane).unwrap();
-                if !bell_pane.bell {
-                    bell_pane.bell = true;
-                    self.bell = Some(pane);
+                if let Some(duration) = self.bell_len {
+                    if duration != 0 {
+                        let bell_pane = self.panes.get_mut(pane).unwrap();
+                        if !bell_pane.bell {
+                            bell_pane.bell = true;
+                            self.bell = Some(pane);
+                        }
+                    }
                 }
             }
             Message::BellOff(_now) => {
@@ -252,12 +262,12 @@ impl Frostty {
                 Subscription::run_with_id(terminal.id, term_event_stream).map(Message::Terminal),
             );
         }
-        if let Some(pane) = self.bell {
-            let bell_pane = self.panes.get(pane).unwrap();
-            subs.push(
-                time::every(std::time::Duration::from_millis(bell_pane.bell_len))
-                    .map(Message::BellOff),
-            );
+        if let Some(duration) = self.bell_len {
+            if duration != 0 {
+                subs.push(
+                    time::every(std::time::Duration::from_millis(duration)).map(Message::BellOff),
+                );
+            }
         }
 
         Subscription::batch(subs)
@@ -382,7 +392,6 @@ struct Pane {
     id: usize,
     pub is_pinned: bool,
     pub bell: bool,
-    pub bell_len: u64,
 }
 
 impl Pane {
@@ -391,7 +400,6 @@ impl Pane {
             id,
             is_pinned: false,
             bell: false,
-            bell_len: 100,
         }
     }
 }
