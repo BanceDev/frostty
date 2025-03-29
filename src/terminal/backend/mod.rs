@@ -1,3 +1,4 @@
+use crate::config;
 // pub mod settings;
 use crate::terminal::actions::Action;
 use crate::terminal::settings::BackendSettings;
@@ -449,8 +450,10 @@ impl Backend {
 
     fn scroll(&mut self, terminal: &mut Term<EventProxy>, delta_value: i32) {
         if delta_value != 0 {
-            // TODO: setting for this
-            let scroll_sens = 3;
+            let scroll_sens = config::Config::new()
+                .and_then(|config| config.general)
+                .and_then(|general| general.scroll)
+                .unwrap_or(3);
             let scroll = Scroll::Delta(delta_value * scroll_sens);
             if terminal
                 .mode()
