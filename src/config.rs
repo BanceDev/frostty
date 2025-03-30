@@ -22,6 +22,7 @@ pub struct General {
 pub struct Window {
     pub dimensions: Option<Dimensions>,
     pub level: Option<String>,
+    pub mode: Option<String>,
 }
 
 #[derive(Deserialize, Clone)]

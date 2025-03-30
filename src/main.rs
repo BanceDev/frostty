@@ -41,7 +41,6 @@ pub fn main() -> iced::Result {
         .antialiasing(false)
         .theme(Frostty::theme)
         .window(iced::window::Settings {
-            level,
             platform_specific: PlatformSpecific {
                 application_id: "frostty".to_string(),
                 override_redirect: false,
@@ -49,7 +48,8 @@ pub fn main() -> iced::Result {
             ..Default::default()
         })
         .window_size(size)
-        .run()
+        .level(level)
+        .run_with(Frostty::new)
 }
 
 struct Frostty {
@@ -78,7 +78,7 @@ enum Message {
 }
 
 impl Frostty {
-    fn new() -> Self {
+    fn new() -> (Self, Task<Message>) {
         let config = config::Config::new();
         let (panes, pane) = pane_grid::State::new(Pane::new(0));
         let mut size = 14.0;
@@ -117,16 +117,37 @@ impl Frostty {
             .and_then(|config| config.bell)
             .and_then(|bell| bell.duration);
 
-        Frostty {
-            panes,
-            panes_created: 1,
-            bell: None,
-            bell_len,
-            focus: Some(pane),
-            terminals,
-            term_settings,
-            config,
+        let mut win_mode = window::Mode::Windowed;
+        let mut maximized = false;
+        if let Some(mode) = config
+            .clone()
+            .and_then(|config| config.window)
+            .and_then(|window| window.mode)
+        {
+            if mode == "Fullscreen" {
+                win_mode = window::Mode::Fullscreen;
+            }
+            if mode == "Maximized" {
+                maximized = true;
+            }
         }
+
+        (
+            Frostty {
+                panes,
+                panes_created: 1,
+                bell: None,
+                bell_len,
+                focus: Some(pane),
+                terminals,
+                term_settings,
+                config,
+            },
+            Task::batch([
+                iced::window::get_latest().and_then(move |id| window::change_mode(id, win_mode)),
+                iced::window::get_latest().and_then(move |id| window::maximize(id, maximized)),
+            ]),
+        )
     }
 
     fn update(&mut self, message: Message) -> Task<Message> {
@@ -398,12 +419,6 @@ impl Frostty {
             );
             Theme::Custom(theme.into())
         }
-    }
-}
-
-impl Default for Frostty {
-    fn default() -> Self {
-        Frostty::new()
     }
 }
 
