@@ -1,10 +1,10 @@
+use crate::terminal::AlacrittyEvent;
 use crate::terminal::actions::Action;
 use crate::terminal::backend::{Backend, BackendCommand};
 use crate::terminal::bindings::{Binding, BindingAction, BindingsLayout, InputKind};
 use crate::terminal::font::TermFont;
 use crate::terminal::settings::{BackendSettings, FontSettings, Settings, ThemeSettings};
 use crate::terminal::theme::{ColorPalette, Theme};
-use crate::terminal::AlacrittyEvent;
 use iced::widget::canvas::Cache;
 use tokio::sync::mpsc::Sender;
 
@@ -64,27 +64,25 @@ impl Terminal {
                         panic!("init pty with ID: {} is failed", self.id);
                     }),
                 );
-            },
+            }
             Command::ChangeTheme(color_pallete) => {
                 self.theme = Theme::new(ThemeSettings::new(color_pallete));
                 action = Action::Redraw;
                 self.sync_and_redraw();
-            },
+            }
             Command::ChangeFont(font_settings) => {
                 self.font = TermFont::new(font_settings);
                 if let Some(ref mut backend) = self.backend {
-                    action = backend.process_command(BackendCommand::Resize(
-                        None,
-                        Some(self.font.measure),
-                    ));
+                    action = backend
+                        .process_command(BackendCommand::Resize(None, Some(self.font.measure)));
                     if action == Action::Redraw {
                         self.redraw();
                     }
                 }
-            },
+            }
             Command::AddBindings(bindings) => {
                 self.bindings.add_bindings(bindings);
-            },
+            }
             Command::ProcessBackendCommand(c) => {
                 if let Some(ref mut backend) = self.backend {
                     action = backend.process_command(c);
@@ -92,7 +90,7 @@ impl Terminal {
                         self.redraw();
                     }
                 }
-            },
+            }
         }
 
         action

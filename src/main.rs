@@ -96,7 +96,8 @@ impl Frostty {
         let mut terminals = HashMap::new();
         terminals.insert(0, term);
 
-        let bell_len = config::Config::new()
+        let bell_len = config
+            .clone()
             .and_then(|config| config.bell)
             .and_then(|bell| bell.duration);
 
@@ -175,7 +176,9 @@ impl Frostty {
             }
             Message::Dragged(_) => {}
             Message::Close(pane) => {
-                if let Some((_, sibling)) = self.panes.close(pane) {
+                if let Some((cur, sibling)) = self.panes.close(pane) {
+                    self.terminals.remove(&(cur.id as u64));
+
                     let new_focused_pane = self.panes.get(sibling).unwrap();
                     let new_focued_terminal = self
                         .terminals
@@ -191,7 +194,9 @@ impl Frostty {
                 if let Some(pane) = self.focus {
                     if let Some(Pane { is_pinned, .. }) = self.panes.get(pane) {
                         if !is_pinned {
-                            if let Some((_, sibling)) = self.panes.close(pane) {
+                            if let Some((cur, sibling)) = self.panes.close(pane) {
+                                self.terminals.remove(&(cur.id as u64));
+
                                 let new_focused_pane = self.panes.get(sibling).unwrap();
                                 let new_focued_terminal = self
                                     .terminals
