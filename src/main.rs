@@ -4,6 +4,7 @@ use iced::theme::Palette;
 use iced::time::{self, Instant};
 use iced::widget::pane_grid::{self, PaneGrid};
 use iced::widget::{container, image, responsive, stack};
+use iced::window::Level;
 use iced::window::settings::PlatformSpecific;
 use iced::{Color, Task, theme};
 use iced::{Element, Fill, Font, Length, Size, Subscription, window};
@@ -22,12 +23,17 @@ pub fn main() -> iced::Result {
         env::set_var("TERM", "frostty");
     }
     let mut size = (790.0, 460.0);
+    let mut level = Level::Normal;
     if let Some(win_cfg) = config::Config::new().and_then(|config| config.window) {
-        let dim = win_cfg.dimensions.unwrap_or(config::Dimensions {
-            width: 790.0,
-            height: 460.0,
-        });
-        size = (dim.width, dim.height);
+        if let Some(level_string) = win_cfg.level {
+            if level_string == "AlwaysOnTop" {
+                level = Level::AlwaysOnTop;
+            }
+        }
+
+        if let Some(dim) = win_cfg.dimensions {
+            size = (dim.width, dim.height);
+        }
     }
 
     iced::application("frostty", Frostty::update, Frostty::view)
@@ -35,6 +41,7 @@ pub fn main() -> iced::Result {
         .antialiasing(false)
         .theme(Frostty::theme)
         .window(iced::window::Settings {
+            level,
             platform_specific: PlatformSpecific {
                 application_id: "frostty".to_string(),
                 override_redirect: false,

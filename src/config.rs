@@ -21,6 +21,7 @@ pub struct General {
 #[derive(Deserialize, Clone)]
 pub struct Window {
     pub dimensions: Option<Dimensions>,
+    pub level: Option<String>,
 }
 
 #[derive(Deserialize, Clone)]
