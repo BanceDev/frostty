@@ -7,6 +7,7 @@ pub struct Config {
     pub colors: Option<Colors>,
     pub general: Option<General>,
     pub keybinds: Option<Keybinds>,
+    pub window: Option<Window>,
     pub font: Option<Font>,
     pub bell: Option<Bell>,
 }
@@ -15,6 +16,17 @@ pub struct Config {
 pub struct General {
     pub wallpaper: Option<String>,
     pub scroll: Option<i32>,
+}
+
+#[derive(Deserialize, Clone)]
+pub struct Window {
+    pub dimensions: Option<Dimensions>,
+}
+
+#[derive(Deserialize, Clone)]
+pub struct Dimensions {
+    pub width: f32,
+    pub height: f32,
 }
 
 #[derive(Deserialize, Clone)]

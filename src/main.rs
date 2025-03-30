@@ -21,6 +21,15 @@ pub fn main() -> iced::Result {
     unsafe {
         env::set_var("TERM", "frostty");
     }
+    let mut size = (790.0, 460.0);
+    if let Some(win_cfg) = config::Config::new().and_then(|config| config.window) {
+        let dim = win_cfg.dimensions.unwrap_or(config::Dimensions {
+            width: 790.0,
+            height: 460.0,
+        });
+        size = (dim.width, dim.height);
+    }
+
     iced::application("frostty", Frostty::update, Frostty::view)
         .subscription(Frostty::subscription)
         .antialiasing(false)
@@ -32,7 +41,7 @@ pub fn main() -> iced::Result {
             },
             ..Default::default()
         })
-        .window_size((790.0, 460.0))
+        .window_size(size)
         .run()
 }
 
