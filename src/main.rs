@@ -3,7 +3,7 @@ use iced::font::Family;
 use iced::theme::Palette;
 use iced::time::{self, Instant};
 use iced::widget::pane_grid::{self, PaneGrid};
-use iced::widget::{container, image, responsive, stack};
+use iced::widget::{button, container, image, responsive, row, stack};
 use iced::window::Level;
 use iced::window::settings::PlatformSpecific;
 use iced::{Color, Task, theme};
@@ -56,7 +56,7 @@ struct Frostty {
     panes: pane_grid::State<Pane>,
     terminals: HashMap<u64, terminal::Terminal>,
     term_settings: terminal::settings::Settings,
-    panes_created: usize,
+    terms_created: usize,
     bell: Option<pane_grid::Pane>,
     bell_len: Option<u64>,
     focus: Option<pane_grid::Pane>,
@@ -66,6 +66,8 @@ struct Frostty {
 #[derive(Debug, Clone)]
 enum Message {
     SplitFocused,
+    TabFocused,
+    CycleTab,
     FocusAdjacent(pane_grid::Direction),
     Clicked(pane_grid::Pane),
     Dragged(pane_grid::DragEvent),
@@ -135,7 +137,7 @@ impl Frostty {
         (
             Frostty {
                 panes,
-                panes_created: 1,
+                terms_created: 1,
                 bell: None,
                 bell_len,
                 focus: Some(pane),
@@ -166,21 +168,47 @@ impl Frostty {
                     } else {
                         pane_grid::Axis::Horizontal
                     };
-                    let result = self.panes.split(axis, pane, Pane::new(self.panes_created));
+                    let result = self.panes.split(axis, pane, Pane::new(self.terms_created));
 
                     let terminal = terminal::Terminal::new(
-                        self.panes_created as u64,
+                        self.terms_created as u64,
                         self.term_settings.clone(),
                     );
                     let command = TerminalView::focus(terminal.widget_id());
-                    self.terminals.insert(self.panes_created as u64, terminal);
+                    self.terminals.insert(self.terms_created as u64, terminal);
 
                     if let Some((pane, _)) = result {
                         self.focus = Some(pane);
                     }
 
-                    self.panes_created += 1;
+                    self.terms_created += 1;
                     return command;
+                }
+            }
+            Message::TabFocused => {
+                let terminal =
+                    terminal::Terminal::new(self.terms_created as u64, self.term_settings.clone());
+                let command = TerminalView::focus(terminal.widget_id());
+                self.terminals.insert(self.terms_created as u64, terminal);
+
+                if let Some(pane) = self.focus {
+                    let focus_pane = self.panes.get_mut(pane).unwrap();
+                    focus_pane.ids.push(self.terms_created);
+                    focus_pane.focus = focus_pane.ids.len() - 1;
+                }
+
+                self.terms_created += 1;
+
+                return command;
+            }
+            Message::CycleTab => {
+                if let Some(pane) = self.focus {
+                    let focus_pane = self.panes.get_mut(pane).unwrap();
+                    if focus_pane.focus == focus_pane.ids.len() - 1 {
+                        focus_pane.focus = 0;
+                    } else {
+                        focus_pane.focus += 1;
+                    }
                 }
             }
             Message::FocusAdjacent(direction) => {
@@ -189,7 +217,7 @@ impl Frostty {
                         let new_focused_pane = self.panes.get(adjacent).unwrap();
                         let new_focued_terminal = self
                             .terminals
-                            .get_mut(&(new_focused_pane.id as u64))
+                            .get_mut(&(new_focused_pane.ids[new_focused_pane.focus] as u64))
                             .unwrap();
                         self.focus = Some(adjacent);
                         return TerminalView::focus(new_focued_terminal.widget_id());
@@ -200,7 +228,7 @@ impl Frostty {
                 let new_focused_pane = self.panes.get(pane).unwrap();
                 let new_focued_terminal = self
                     .terminals
-                    .get_mut(&(new_focused_pane.id as u64))
+                    .get_mut(&(new_focused_pane.focus as u64))
                     .unwrap();
                 self.focus = Some(pane);
                 return TerminalView::focus(new_focued_terminal.widget_id());
@@ -214,12 +242,12 @@ impl Frostty {
             Message::Dragged(_) => {}
             Message::Close(pane) => {
                 if let Some((cur, sibling)) = self.panes.close(pane) {
-                    self.terminals.remove(&(cur.id as u64));
+                    self.terminals.remove(&(cur.focus as u64));
 
                     let new_focused_pane = self.panes.get(sibling).unwrap();
                     let new_focued_terminal = self
                         .terminals
-                        .get_mut(&(new_focused_pane.id as u64))
+                        .get_mut(&(new_focused_pane.ids[new_focused_pane.focus] as u64))
                         .unwrap();
                     self.focus = Some(sibling);
                     return TerminalView::focus(new_focued_terminal.widget_id());
@@ -232,12 +260,12 @@ impl Frostty {
                     if let Some(Pane { is_pinned, .. }) = self.panes.get(pane) {
                         if !is_pinned {
                             if let Some((cur, sibling)) = self.panes.close(pane) {
-                                self.terminals.remove(&(cur.id as u64));
+                                self.terminals.remove(&(cur.focus as u64));
 
                                 let new_focused_pane = self.panes.get(sibling).unwrap();
                                 let new_focued_terminal = self
                                     .terminals
-                                    .get_mut(&(new_focused_pane.id as u64))
+                                    .get_mut(&(new_focused_pane.ids[new_focused_pane.focus] as u64))
                                     .unwrap();
                                 self.focus = Some(sibling);
                                 return TerminalView::focus(new_focued_terminal.widget_id());
@@ -348,9 +376,31 @@ impl Frostty {
 
         let pane_grid = PaneGrid::new(&self.panes, |id, pane, _is_maximized| {
             let is_focused = focus == Some(id);
+            let mut font_type = Font::MONOSPACE;
+            if let Some(font) = self.config.clone().and_then(|config| config.font) {
+                font_type = match font.family {
+                    Some(family) => Font {
+                        family: Family::Name(Box::leak(family.clone().into_boxed_str())),
+                        ..Font::MONOSPACE
+                    },
+                    None => Font::MONOSPACE,
+                };
+            }
 
-            pane_grid::Content::new(responsive(move |_size| {
-                view_content(pane.id as u64, pane.bell, &self.terminals)
+            let mut title = row![].padding(5);
+            for _ in pane.ids.clone() {
+                title = title.push(button("Terminal").on_press(Message::CycleTab));
+            }
+            let title_bar = pane_grid::TitleBar::new(title)
+                .padding(0)
+                .style(if is_focused {
+                    style::tab_focused
+                } else {
+                    style::tab_unfocused
+                });
+
+            let pane_content = pane_grid::Content::new(responsive(move |_size| {
+                view_content(pane.ids[pane.focus] as u64, pane.bell, &self.terminals)
             }))
             .style(if is_focused {
                 if pane.bell {
@@ -360,7 +410,13 @@ impl Frostty {
                 }
             } else {
                 style::pane_unfocused
-            })
+            });
+
+            if pane.ids.len() > 1 {
+                return pane_content.title_bar(title_bar);
+            }
+
+            pane_content
         })
         .width(Fill)
         .height(Fill)
@@ -436,6 +492,8 @@ fn handle_hotkey(key: keyboard::Key) -> Option<Message> {
         // TODO: config file for this
         Key::Character("q") => Some(Message::CloseFocused),
         Key::Character("n") => Some(Message::SplitFocused),
+        Key::Character("t") => Some(Message::TabFocused),
+        Key::Named(key::Named::Tab) => Some(Message::CycleTab),
         Key::Named(key) => {
             let direction = match key {
                 key::Named::ArrowUp => Some(Direction::Up),
@@ -451,9 +509,10 @@ fn handle_hotkey(key: keyboard::Key) -> Option<Message> {
     }
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone)]
 struct Pane {
-    id: usize,
+    pub ids: Vec<usize>,
+    focus: usize,
     pub is_pinned: bool,
     pub bell: bool,
 }
@@ -461,7 +520,8 @@ struct Pane {
 impl Pane {
     fn new(id: usize) -> Self {
         Self {
-            id,
+            ids: vec![id],
+            focus: 0,
             is_pinned: false,
             bell: false,
         }
