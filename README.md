@@ -17,6 +17,9 @@
 
 Frostty is a modern terminal emulator for the terminal power user. It is focused on prividing a highly customizable, smooth experience that comes with simple defaults but many opt-in features. Being built using Rust with the Iced GUI framework.
 
+> [!NOTE]
+> Frostty is considered to be at an alpha level of readiness; there are many features to come and there may be bugs.
+
 ## Features
 
 You can find an overview of the current and planned features for Frostty [here](./docs/features.md)
