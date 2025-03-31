@@ -228,7 +228,7 @@ impl Frostty {
                 let new_focused_pane = self.panes.get(pane).unwrap();
                 let new_focued_terminal = self
                     .terminals
-                    .get_mut(&(new_focused_pane.focus as u64))
+                    .get_mut(&(new_focused_pane.ids[new_focused_pane.focus] as u64))
                     .unwrap();
                 self.focus = Some(pane);
                 return TerminalView::focus(new_focued_terminal.widget_id());
