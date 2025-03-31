@@ -16,6 +16,7 @@ pub struct Config {
 pub struct General {
     pub wallpaper: Option<String>,
     pub scroll: Option<i32>,
+    pub gaps: Option<f32>,
 }
 
 #[derive(Deserialize, Clone)]

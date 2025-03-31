@@ -339,6 +339,15 @@ impl Frostty {
 
     fn view(&self) -> Element<Message> {
         let focus = self.focus;
+        let gaps = match self
+            .config
+            .clone()
+            .and_then(|config| config.general)
+            .and_then(|general| general.gaps)
+        {
+            Some(gaps) => gaps,
+            None => 0.0,
+        };
 
         let pane_grid = PaneGrid::new(&self.panes, |id, pane, _is_maximized| {
             let is_focused = focus == Some(id);
@@ -358,7 +367,7 @@ impl Frostty {
         })
         .width(Fill)
         .height(Fill)
-        .spacing(10)
+        .spacing(gaps)
         .on_click(Message::Clicked)
         .on_drag(Message::Dragged)
         .on_resize(10, Message::Resized);
@@ -372,13 +381,13 @@ impl Frostty {
             stack![
                 image(format!("{}/.config/frostty/{}", env!("HOME"), wallpaper))
                     .content_fit(iced::ContentFit::Cover),
-                container(pane_grid).padding(10)
+                container(pane_grid).padding(gaps)
             ]
             .width(Fill)
             .height(Fill)
             .into()
         } else {
-            container(pane_grid).padding(10).into()
+            container(pane_grid).padding(gaps).into()
         }
     }
 
