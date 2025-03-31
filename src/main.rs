@@ -339,15 +339,12 @@ impl Frostty {
 
     fn view(&self) -> Element<Message> {
         let focus = self.focus;
-        let gaps = match self
+        let gaps = self
             .config
             .clone()
             .and_then(|config| config.general)
             .and_then(|general| general.gaps)
-        {
-            Some(gaps) => gaps,
-            None => 0.0,
-        };
+            .unwrap_or(0.0);
 
         let pane_grid = PaneGrid::new(&self.panes, |id, pane, _is_maximized| {
             let is_focused = focus == Some(id);
