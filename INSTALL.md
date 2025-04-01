@@ -1,38 +1,5 @@
 # Frostty Installation
 
-1. [Prerequisites](#prerequisites)
-    1. [Source Code](#clone-the-source-code)
-    2. [Rust Compiler](#install-the-rust-compiler-with-rustup)
-    3. [Dependencies](#dependencies)
-        1. [Debian/Ubuntu](#debianubuntu)
-        2. [Arch Linux](#arch-linux)
-        3. [Fedora](#fedora)
-        4. [CentOS/RHEL 7](#centosrhel-7)
-        5. [openSUSE](#opensuse)
-        6. [Slackware](#slackware)
-        7. [Void Linux](#void-linux)
-        8. [FreeBSD](#freebsd)
-        9. [OpenBSD](#openbsd)
-        10. [Solus](#solus)
-        11. [NixOS/Nixpkgs](#nixosnixpkgs)
-        12. [Gentoo](#gentoo)
-        13. [Clear Linux](#clear-linux)
-        14. [GNU Guix](#gnu-guix)
-        15. [Alpine Linux](#alpine-linux)
-        16. [Windows](#windows)
-        17. [Other](#other)
-2. [Building](#building)
-    1. [Linux/Windows/BSD](#linux--windows--bsd)
-    2. [macOS](#macos)
-3. [Post Build](#post-build)
-    1. [Terminfo](#terminfo)
-    2. [Desktop Entry](#desktop-entry)
-    3. [Manual Page](#manual-page)
-    4. [Shell completions](#shell-completions)
-        1. [Zsh](#zsh)
-        2. [Bash](#bash)
-        3. [Fish](#fish)
-
 ## Prerequisites
 
 ### Clone the source code
