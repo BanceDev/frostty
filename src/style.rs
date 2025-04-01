@@ -34,7 +34,7 @@ pub fn tab_unfocused(theme: &Theme) -> container::Style {
     let palette = theme.palette();
 
     container::Style {
-        background: None,
+        background: Some(Background::from(palette.background)),
         border: Border {
             width: 2.0,
             color: palette.text,
