@@ -4,8 +4,8 @@ use iced::theme::Palette;
 use iced::time::{self, Instant};
 use iced::widget::pane_grid::{self, PaneGrid};
 use iced::widget::{container, image, responsive, stack};
-use iced::window::Level;
 use iced::window::settings::PlatformSpecific;
+use iced::window::{Level, icon};
 use iced::{Color, Task, theme};
 use iced::{Element, Fill, Font, Length, Size, Subscription, window};
 use iced::{Theme, keyboard};
@@ -45,6 +45,13 @@ pub fn main() -> iced::Result {
                 application_id: "frostty".to_string(),
                 override_redirect: false,
             },
+            icon: Some(
+                iced::window::icon::from_file_data(
+                    include_bytes!("../extra/icons/hicolor/24x24/apps/frostty.png"),
+                    None,
+                )
+                .unwrap(),
+            ),
             ..Default::default()
         })
         .window_size(size)
