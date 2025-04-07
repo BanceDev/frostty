@@ -5,13 +5,20 @@ use crate::config;
 
 pub fn pane_unfocused(theme: &Theme) -> container::Style {
     let palette = theme.palette();
+    let radius = match config::Config::new()
+        .and_then(|config| config.general)
+        .and_then(|general| general.radius)
+    {
+        Some(rad) => iced::border::Radius::new(rad),
+        None => iced::border::Radius::default(),
+    };
 
     container::Style {
         background: None,
         border: Border {
             width: 2.0,
             color: palette.text,
-            ..Border::default()
+            radius,
         },
         ..Default::default()
     }
@@ -19,13 +26,20 @@ pub fn pane_unfocused(theme: &Theme) -> container::Style {
 
 pub fn pane_focused(theme: &Theme) -> container::Style {
     let palette = theme.palette();
+    let radius = match config::Config::new()
+        .and_then(|config| config.general)
+        .and_then(|general| general.radius)
+    {
+        Some(rad) => iced::border::Radius::new(rad),
+        None => iced::border::Radius::default(),
+    };
 
     container::Style {
         background: None,
         border: Border {
             width: 2.0,
             color: palette.primary,
-            ..Border::default()
+            radius,
         },
         ..Default::default()
     }
