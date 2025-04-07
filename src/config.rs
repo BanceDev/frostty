@@ -6,6 +6,7 @@ use serde::Deserialize;
 pub struct Config {
     pub colors: Option<Colors>,
     pub general: Option<General>,
+    pub border: Option<Border>,
     pub keybinds: Option<Keybinds>,
     pub window: Option<Window>,
     pub font: Option<Font>,
@@ -17,7 +18,6 @@ pub struct General {
     pub wallpaper: Option<String>,
     pub scroll: Option<i32>,
     pub gaps: Option<f32>,
-    pub radius: Option<f32>,
 }
 
 #[derive(Deserialize, Clone)]
@@ -31,6 +31,12 @@ pub struct Window {
 pub struct Dimensions {
     pub width: f32,
     pub height: f32,
+}
+
+#[derive(Deserialize, Clone)]
+pub struct Border {
+    pub radius: Option<f32>,
+    pub thickness: Option<f32>,
 }
 
 #[derive(Deserialize, Clone)]
