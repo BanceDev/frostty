@@ -54,6 +54,7 @@ pub fn main() -> iced::Result {
             ),
             ..Default::default()
         })
+        .transparent(true)
         .window_size(size)
         .level(level)
         .run_with(Frostty::new)
