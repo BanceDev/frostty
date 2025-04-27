@@ -287,7 +287,7 @@ impl<'a> TerminalView<'a> {
                                 last_content.terminal_mode,
                             );
 
-                            if binding_action == BindingAction::Ignore && !modifiers.alt() {
+                            if binding_action == BindingAction::Ignore && !modifiers.alt() && !modifiers.logo() {
                                 return Some(Command::ProcessBackendCommand(
                                     BackendCommand::Write(c.as_bytes().to_vec()),
                                 ));
